@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useListTaxResources } from '@workspace/api-client-react';
 
 const STEPS = [
   { t: 'Pastikan kewajibannya', d: 'Cek jenis pajak, masa pajak, dan nominal yang benar-benar terutang. Bila ragu, tanyakan ke KPP atau Kring Pajak.' },
@@ -21,6 +22,8 @@ const STEPS = [
 export default function Pembayaran() {
   usePageTitle('Pembayaran');
   const { payments, deletePayment } = useStore();
+  const manual = useListTaxResources();
+  const manualSections = (manual.data ?? []).filter((r) => r.id.startsWith('payment-manual-'));
   const { toast } = useToast();
   const [q, setQ] = useState('');
   const [tax, setTax] = useState('semua');
@@ -43,6 +46,22 @@ export default function Pembayaran() {
       <PageHeader eyebrow="Pembayaran" title="Catatan setoran Anda"
         desc="Arsip pribadi atas pembayaran yang sudah Anda lakukan di kanal resmi. Tidak tersambung dan tidak diverifikasi ke DJP."
         actions={<Button className="press font-semibold" onClick={add} data-testid="button-add-payment"><Plus className="h-4 w-4 mr-1.5" />Catat pembayaran</Button>} />
+
+      <section className="mb-8 rounded-2xl border border-border bg-card p-5" aria-labelledby="manual-payment-title">
+        <h2 id="manual-payment-title" className="text-lg font-semibold">Panduan pembayaran berbasis manual DJP</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Ringkasan bagian manual edisi 29 November 2024, bukan jaminan prosedur saat ini. Cocokkan dengan portal resmi. Nomor billing bukan bukti pelunasan, dan masa aktif billing bukan jatuh tempo pajak.</p>
+        {manual.isLoading ? <p className="mt-4 text-sm" role="status">Memuat panduan…</p>
+          : manual.isError ? <div className="mt-4 text-sm" role="alert">Panduan belum dapat dimuat. <button className="text-accent underline" onClick={() => manual.refetch()}>Coba lagi</button></div>
+          : manualSections.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">Belum ada bagian manual yang tersedia.</p>
+          : <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {manualSections.map((r) => <details key={r.id} className="rounded-xl border border-border bg-background/50 p-4">
+              <summary className="cursor-pointer text-sm font-semibold text-foreground">{r.title}</summary>
+              <p className="mt-3 text-xs text-accent">{r.description}</p>
+              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground/85">{r.excerpt}</p>
+              <a href={r.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm text-accent underline underline-offset-4">Buka halaman sumber PDF<ArrowUpRight className="h-4 w-4" /></a>
+            </details>)}
+          </div>}
+      </section>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0 order-2 lg:order-1">

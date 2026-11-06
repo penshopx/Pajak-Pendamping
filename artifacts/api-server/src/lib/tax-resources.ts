@@ -1,6 +1,7 @@
 // Curated excerpts, not an automatically refreshed or exhaustive legal corpus.
-// PDF entries confirm the directory listing only, not analysis of PDF contents.
+// PDF entries are directory references unless explicitly marked as analyzed.
 import { professionalResources } from "./tax-professional-resources";
+import { paymentManualSections } from "./tax-payment-manual";
 
 const checkedAt = "2026-11-06";
 const hub = "https://www.pajak.go.id/id/coretax";
@@ -24,7 +25,7 @@ export const taxResources = [
   resource("short-guide", "Buku Panduan Ringkas Coretax DJP", "Panduan Ringkas", "Panduan ringkas resmi dalam format PDF.", pdf + "2025-01/Panduan%20Ringkas%20Coretax%20DJP.pdf", "Manual PDF", "Terdaftar pada direktori resmi Coretax DJP sebagai Buku Panduan Ringkas Coretax DJP. Isi PDF belum dianalisis; buka dokumen asli untuk langkah rinci."),
   resource("activation", "Aktivasi akun Coretax DJP", "Registrasi", "Leaflet resmi untuk memulai akses akun Coretax.", pdf + "2025-06/Leaflet%20Aktivasi%20Akun%20pada%20Coretax%20DJP.pdf", "Leaflet PDF", "Direktori Coretax DJP menyediakan Leaflet Aktivasi Akun pada Aplikasi Coretax. Jangan membagikan kata sandi atau OTP. Isi PDF belum dianalisis."),
   resource("roles", "Penanggung jawab dan akses wajib pajak badan", "Registrasi", "Panduan penanggung jawab, impersonate, dan penambahan role akses.", pdf + "2025-01/Penanggung%20Jawab%2C%20Impersonate%20dan%20Penambahan%20Role%20Akses%20WP%20Badan%20%281%29.pdf", "Manual PDF", "Direktori resmi menyediakan panduan Penanggung Jawab, Impersonate, dan Penambahan Role Akses Bagi Wajib Pajak Badan. Isi PDF belum dianalisis."),
-  resource("payment-manual", "Buku Manual Coretax — Pembayaran", "Pembayaran", "Manual resmi seri pembayaran Coretax 2024.", pdf + "2025-01/Buku%20Manual%20Coretax%202024%20-%20Seri%20Pembayaran.pdf", "Manual PDF", "Terdaftar pada direktori Coretax DJP sebagai Buku Manual Coretax 2024 - Pembayaran. Isi PDF belum dianalisis; periksa kesesuaian versi dengan portal dan ketentuan berlaku."),
+  resource("payment-manual", "Buku Manual Coretax — Pembayaran", "Pembayaran", "Manual edisi 29 November 2024. Bagian pembayaran tertentu telah diringkas dengan rujukan halaman.", pdf + "2025-01/Buku%20Manual%20Coretax%202024%20-%20Seri%20Pembayaran.pdf", "Manual PDF", "Edisi 20241129 pada sampul, berjumlah 49 halaman. Bagian yang telah dibaca dan diringkas: hlm. 9–10, 23–25, 30–31, 33–35. Bagian lain belum dianalisis. Hlm. 3 memperingatkan informasi dapat berubah mengikuti ketentuan perpajakan dan pengembangan aplikasi. Gunakan entri bagian berhalaman untuk langkah teknis, bukan menganggap seluruh manual sebagai prosedur terkini."),
   resource("annual", "Pelaporan SPT Tahunan PPh Orang Pribadi", "Pelaporan SPT", "Manual pelaporan SPT Tahunan untuk orang pribadi.", pdf + "2024-09/Buku%20Manual%20Coretax%202024%20-%2015%20Pelaporan%20SPT%20Tahunan%20PPh%20OP_0.pdf", "Manual PDF", "Direktori resmi menyediakan Buku Manual Coretax 2024 - Pelaporan SPT Tahunan PPh OP. Isi PDF belum dianalisis. Penerapan pada UMKM bergantung pada bentuk dan kondisi wajib pajak."),
   resource("unifikasi", "Pelaporan SPT Masa Unifikasi", "Pelaporan SPT", "Manual resmi seri SPT Masa Unifikasi.", pdf + "2025-01/Buku%20Manual%20Coretax%202024%20-%20Seri%20SPT%20Masa%20Unifikasi.pdf", "Manual PDF", "Direktori Coretax menyediakan Buku Manual Coretax 2024 - Pelaporan SPT Masa Unifikasi. Isi PDF belum dianalisis."),
   resource("ppn", "Pelaporan SPT Masa PPN", "Pelaporan SPT", "Manual resmi pelaporan SPT Masa PPN.", pdf + "2025-04/Buku%20Manual%20SPT%20Masa%20PPN.pdf", "Manual PDF", "Direktori Coretax menyediakan Buku Manual Coretax 2024 - Pelaporan SPT Masa PPN. Isi PDF belum dianalisis."),
@@ -37,6 +38,7 @@ export const taxResources = [
   resource("kodjp", "Leaflet Panduan Memperoleh KODJP", "Registrasi", "Panduan Kode Otorisasi DJP yang ditautkan pada halaman Coretax.", pdf + "2025-12/Leaflet%20Panduan%20Memperoleh%20KODJP%20v202512_0.pdf", "Leaflet PDF", "Direktori Coretax DJP menyediakan Leaflet Panduan Memperoleh KODJP. Isi PDF belum dianalisis; langkah aktivasi atau otorisasi tidak boleh dibuat berdasarkan judul saja."),
   resource("cbcr", "Panduan CbCR pada Coretax DJP", "Panduan Ringkas", "Rujukan khusus CbCR; tidak otomatis berlaku untuk seluruh UMKM.", pdf + "2025-07/Panduan%20CbCR%20pada%20Coretax%20DJP_0.pdf", "Manual PDF", "Direktori Coretax DJP mencantumkan Panduan CbCR. Isi PDF belum dianalisis; keberadaan panduan tidak berarti semua UMKM wajib melakukan CbCR."),
   ...professionalResources(checkedAt),
+  ...paymentManualSections(checkedAt),
 ];
 
 export const taxDisclaimer = "Informasi edukasi, bukan penetapan pajak atau pengganti nasihat konsultan. Sumber terbatas dan tidak diperbarui otomatis. Verifikasi ketentuan yang berlaku melalui DJP/KPP. Sahabat Pajak bukan layanan resmi DJP, tidak mengklaim izin praktik konsultan atau penunjukan sebagai PJAP.";
