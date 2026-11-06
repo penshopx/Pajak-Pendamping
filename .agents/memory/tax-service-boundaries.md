@@ -9,6 +9,12 @@ Pengguna memilih UMKM dan pemilik usaha, konsultasi AI bersumber, serta panduan 
 
 **How to apply:** Jangan menambah penerimaan dana, verifikasi pembayaran DJP, atau pemesanan konsultan tanpa permintaan baru.
 
+Pengguna memilih tautan penawaran template pajak komersial sebagai “Referensi fitur aplikasi”.
+
+**Why:** Pilihan eksplisit pengguna; bukan permintaan membeli produk, menyalin materi berbayar, atau menjadikan promosi sebagai sumber hukum AI.
+
+**How to apply:** Gunakan untuk mengusulkan fungsi yang relevan bagi Sahabat Pajak. Verifikasi aturan dan rumus dari sumber resmi sebelum menerapkan perhitungan.
+
 Referensi konsultan pajak dan PJAP digunakan untuk pustaka dan konsultasi AI, bukan untuk video atau klaim status profesi aplikasi.
 
 **Why:** Pengguna secara eksplisit memilih “Tambahkan ke pustaka dan AI” untuk referensi tambahan tersebut.
