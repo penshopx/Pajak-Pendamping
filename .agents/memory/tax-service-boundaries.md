@@ -38,3 +38,9 @@ Jangan menganggap unduhan bertautan `.pdf` dan respons HTTP sukses sebagai bukti
 **Why:** Sumber leaflet aktivasi DJP pernah mengembalikan unduhan terpotong lalu HTML “Under Maintenance” pada URL PDF, sedangkan leaflet KODJP berhasil diakses. Tanpa pemeriksaan, status analisis sumber dapat keliru.
 
 **How to apply:** Pastikan isi berkas benar-benar PDF yang terbaca. Bila tidak, gunakan sumber resmi alternatif dengan identitasnya sendiri dan nyatakan bahwa dokumen awal belum dianalisis.
+
+Untuk konsultasi, pertahankan cuplikan yang ditinjau manusia/agen dan batas cakupan yang eksplisit; jangan menggantinya dengan hasil pencarian web mentah sebagai kepastian hukum. Aturan asal harus dibaca bersama penghapusan/perubahan dan ketentuan peralihan yang relevan.
+
+**Why:** Aturan baru bisa menghapus batas umum lama tetapi tetap mempertahankan pemakaiannya untuk kelompok peralihan. Kutipan lama yang benar secara tekstual dapat tetap menghasilkan jawaban yang salah bila dipakai sendirian.
+
+**How to apply:** Saat memperluas sumber, tinjau keterkaitan perubahan dan peralihan pada tingkat pasal. Tanggal pemeriksaan bukan jaminan konsolidasi lengkap, dan sitasi yang valid secara format bukan bukti bahwa penafsiran AI sudah benar.

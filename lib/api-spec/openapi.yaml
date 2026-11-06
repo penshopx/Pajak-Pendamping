@@ -77,6 +77,16 @@ components:
         sourceType: { type: string }
         checkedAt: { type: string }
         excerpt: { type: string }
+        locator: { type: string, description: "Pasal atau halaman yang telah dibaca" }
+        version: { type: string }
+        verification: { type: string, enum: [excerpt, page, metadata, directory] }
+        limitations: { type: string }
+        relatedIds:
+          type: array
+          items: { type: string }
+        topics:
+          type: array
+          items: { type: string }
     ConsultationInput:
       type: object
       required: [question]

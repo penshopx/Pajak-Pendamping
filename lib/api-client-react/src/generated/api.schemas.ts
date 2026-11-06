@@ -5,6 +5,16 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type TaxResourceVerification = typeof TaxResourceVerification[keyof typeof TaxResourceVerification];
+
+
+export const TaxResourceVerification = {
+  excerpt: 'excerpt',
+  page: 'page',
+  metadata: 'metadata',
+  directory: 'directory',
+} as const;
+
 export interface TaxResource {
   id: string;
   title: string;
@@ -15,6 +25,13 @@ export interface TaxResource {
   sourceType: string;
   checkedAt: string;
   excerpt: string;
+  /** Pasal atau halaman yang telah dibaca */
+  locator?: string;
+  version?: string;
+  verification?: TaxResourceVerification;
+  limitations?: string;
+  relatedIds?: string[];
+  topics?: string[];
 }
 
 export type ConsultationMessageRole = typeof ConsultationMessageRole[keyof typeof ConsultationMessageRole];

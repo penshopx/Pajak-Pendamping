@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { TaxResourceVerification } from './taxResourceVerification';
 
 export interface TaxResource {
   id: string;
@@ -16,4 +17,11 @@ export interface TaxResource {
   sourceType: string;
   checkedAt: string;
   excerpt: string;
+  /** Pasal atau halaman yang telah dibaca */
+  locator?: string;
+  version?: string;
+  verification?: TaxResourceVerification;
+  limitations?: string;
+  relatedIds?: string[];
+  topics?: string[];
 }

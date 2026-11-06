@@ -12,3 +12,4 @@ export * from './consultationMessage';
 export * from './consultationMessageRole';
 export * from './healthStatus';
 export * from './taxResource';
+export * from './taxResourceVerification';

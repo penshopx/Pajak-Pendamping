@@ -10,7 +10,10 @@ export interface Payment {
   id: string; taxType: string; period: string; amount: number; date: string;
   ntpn?: string; notes: string; demo?: boolean;
 }
-export interface ChatSource { id: string; title: string; url: string; publisher: string; category: string; checkedAt: string }
+export interface ChatSource {
+  id: string; title: string; url: string; publisher: string; category: string; checkedAt: string;
+  sourceType?: string; locator?: string; version?: string; verification?: string; limitations?: string; excerpt?: string;
+}
 export interface ChatMessage {
   id: string; role: 'user' | 'assistant'; content: string; createdAt: string;
   sources?: ChatSource[]; disclaimer?: string; checkedAt?: string;

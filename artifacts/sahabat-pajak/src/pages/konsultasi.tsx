@@ -22,7 +22,8 @@ const SUGGESTED = [
 
 const MIN = 5, MAX = 2000;
 
-function Formatted({ text }: { text: string }) {
+function Formatted({ text, sources, messageId }: { text: string; sources: ChatMessage['sources']; messageId: string }) {
+  const renderInline = (text: string) => inline(text, sources, messageId);
   const blocks = text.split(/\n{2,}/);
   return (
     <div className="space-y-3 text-[15px] leading-relaxed text-foreground">
@@ -30,18 +31,24 @@ function Formatted({ text }: { text: string }) {
         const lines = b.split('\n').filter(Boolean);
         if (lines.length && lines.every((l) => /^\s*([-*•]|\d+[.)])\s+/.test(l))) {
           const ordered = /^\s*\d/.test(lines[0]);
-          const items = lines.map((l, j) => <li key={j}>{inline(l.replace(/^\s*([-*•]|\d+[.)])\s+/, ''))}</li>);
+          const items = lines.map((l, j) => <li key={j}>{renderInline(l.replace(/^\s*([-*•]|\d+[.)])\s+/, ''))}</li>);
           return ordered ? <ol key={i} className="list-decimal space-y-1 pl-5 marker:text-accent">{items}</ol> : <ul key={i} className="list-disc space-y-1 pl-5 marker:text-primary">{items}</ul>;
         }
-        if (/^#{1,4}\s/.test(b)) return <h3 key={i} className="font-display text-lg font-bold text-white">{b.replace(/^#+\s/, '')}</h3>;
-        return <p key={i} className="whitespace-pre-wrap">{inline(b)}</p>;
+        if (/^#{1,4}\s/.test(b)) return <h3 key={i} className="font-display text-lg font-bold text-white">{renderInline(b.replace(/^#+\s/, ''))}</h3>;
+        return <p key={i} className="whitespace-pre-wrap">{renderInline(b)}</p>;
       })}
     </div>
   );
 }
-function inline(s: string) {
-  return s.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith('**') && part.endsWith('**') ? <strong key={i} className="font-semibold text-white">{part.slice(2, -2)}</strong> : <span key={i}>{part}</span>);
+function inline(s: string, sources: ChatMessage['sources'], messageId: string) {
+  return s.split(/(\*\*[^*]+\*\*|\[[a-zA-Z0-9_-]+\])/g).map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) return <strong key={i} className="font-semibold text-white">{inline(part.slice(2, -2), sources, messageId)}</strong>;
+    const index = sources?.findIndex(source => `[${source.id}]` === part) ?? -1;
+    if (index >= 0) return <a key={i} href={`#source-${messageId}-${sources![index].id}`}
+      className="rounded px-1 font-semibold text-accent underline underline-offset-4"
+      aria-label={`Rujukan ${index + 1}: ${sources![index].title}`}>[{index + 1}]</a>;
+    return <span key={i}>{part}</span>;
+  });
 }
 
 export default function Konsultasi() {
@@ -71,7 +78,8 @@ export default function Konsultasi() {
       const msg: ChatMessage = {
         id: uid(), role: 'assistant', content: res.answer, createdAt: new Date().toISOString(),
         disclaimer: res.disclaimer, checkedAt: res.checkedAt,
-        sources: res.sources.map((s) => ({ id: s.id, title: s.title, url: s.url, publisher: s.publisher, category: s.category, checkedAt: s.checkedAt })),
+        sources: res.sources.map((s) => ({ id: s.id, title: s.title, url: s.url, publisher: s.publisher, category: s.category, checkedAt: s.checkedAt,
+          sourceType: s.sourceType, locator: s.locator, version: s.version, verification: s.verification, limitations: s.limitations, excerpt: s.excerpt })),
       };
       addChat(msg);
       setLastQ(null);
@@ -113,21 +121,29 @@ export default function Konsultasi() {
           </div>
         ) : (
           <article key={m.id} className="rise max-w-3xl rounded-2xl rounded-bl-md border border-border bg-card p-5" data-testid={`msg-assistant-${m.id}`}>
-            <Formatted text={m.content} />
+            <Formatted text={m.content} sources={m.sources} messageId={m.id} />
             {m.sources && m.sources.length > 0 && (
               <div className="mt-5 border-t border-border pt-4">
                 <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-accent">Sumber rujukan</div>
                 <ol className="grid gap-2 sm:grid-cols-2">
                   {m.sources.map((s, i) => (
-                    <li key={s.id + i}>
+                    <li key={s.id + i} id={`source-${m.id}-${s.id}`} className="scroll-mt-24 min-w-0">
                       <a href={s.url} target="_blank" rel="noopener noreferrer" data-testid={`link-source-${s.id}`}
                         className="lift group flex h-full gap-3 rounded-lg border border-border bg-background/60 p-3">
                         <span className="num grid h-6 w-6 shrink-0 place-items-center rounded bg-primary/20 text-xs font-bold text-accent">{i + 1}</span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-sm font-semibold leading-snug text-white group-hover:underline underline-offset-4">{s.title}</span>
                           <span className="mt-0.5 block text-xs text-muted-foreground">{s.publisher} · dicek {formatDate(s.checkedAt)}</span>
+                          <span className="mt-1 block text-xs text-accent">{s.sourceType ?? s.category}{s.verification === 'directory' ? ' · hanya direktori' : s.verification === 'metadata' ? ' · hanya metadata' : ''}</span>
+                          {s.locator && <span className="mt-1 block text-xs leading-relaxed text-foreground">{s.locator}</span>}
+                          {s.version && <span className="mt-1 block text-xs text-muted-foreground">Versi: {s.version}</span>}
                         </span>
                       </a>
+                      {(s.excerpt || s.limitations) && <details className="mt-1 rounded-lg border border-border p-3 text-xs leading-relaxed text-muted-foreground">
+                        <summary className="cursor-pointer font-semibold text-accent">Lihat cuplikan dan batas sumber</summary>
+                        {s.excerpt && <p className="mt-2 whitespace-pre-wrap text-foreground">{s.excerpt}</p>}
+                        {s.limitations && <p className="mt-2">{s.limitations}</p>}
+                      </details>}
                     </li>
                   ))}
                 </ol>

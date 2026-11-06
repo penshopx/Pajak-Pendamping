@@ -20,7 +20,13 @@ export const ListTaxResourcesResponseItem = zod.object({
   "publisher": zod.string(),
   "sourceType": zod.string(),
   "checkedAt": zod.string(),
-  "excerpt": zod.string()
+  "excerpt": zod.string(),
+  "locator": zod.string().optional().describe('Pasal atau halaman yang telah dibaca'),
+  "version": zod.string().optional(),
+  "verification": zod.enum(['excerpt', 'page', 'metadata', 'directory']).optional(),
+  "limitations": zod.string().optional(),
+  "relatedIds": zod.array(zod.string()).optional(),
+  "topics": zod.array(zod.string()).optional()
 })
 export const ListTaxResourcesResponse = zod.array(ListTaxResourcesResponseItem)
 
@@ -56,7 +62,13 @@ export const ConsultTaxResponse = zod.object({
   "publisher": zod.string(),
   "sourceType": zod.string(),
   "checkedAt": zod.string(),
-  "excerpt": zod.string()
+  "excerpt": zod.string(),
+  "locator": zod.string().optional().describe('Pasal atau halaman yang telah dibaca'),
+  "version": zod.string().optional(),
+  "verification": zod.enum(['excerpt', 'page', 'metadata', 'directory']).optional(),
+  "limitations": zod.string().optional(),
+  "relatedIds": zod.array(zod.string()).optional(),
+  "topics": zod.array(zod.string()).optional()
 })),
   "disclaimer": zod.string(),
   "checkedAt": zod.string()
