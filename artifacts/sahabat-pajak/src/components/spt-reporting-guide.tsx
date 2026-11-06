@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { ArrowUpRight, ClipboardList, TriangleAlert } from 'lucide-react';
 import type { TaxResource } from '@workspace/api-client-react';
+import { SptPreparationChecklist } from '@/components/spt-preparation-checklist';
 
 export function SptReportingGuide({ resources }: { resources: TaxResource[] }) {
   const [kind, setKind] = useState<'op' | 'badan'>('op');
   const steps = resources.filter((r) => r.id.startsWith(`spt-guide-${kind}-`));
   const common = resources.filter((r) => ['spt-guide-deadlines', 'spt-guide-policy-alert'].includes(r.id));
   const hub = resources.find((r) => r.id === 'spt-guide-hub');
-  if (!steps.length && !hub) return null;
 
   return (
     <section className="rounded-2xl border border-primary/35 bg-card p-5 sm:p-6" aria-labelledby="spt-guide-title" data-testid="section-spt-guide">
@@ -28,6 +28,8 @@ export function SptReportingGuide({ resources }: { resources: TaxResource[] }) {
       <p className="mt-3 text-xs leading-relaxed text-muted-foreground" data-testid="text-spt-scope">
         {kind === 'op' ? 'Untuk usaha atas nama wajib pajak orang pribadi. Panduan alur Coretaxpedia diperbarui 27 Februari 2026; contoh dokumen dan BPE dari manual 2025.' : 'Untuk wajib pajak badan. Contoh manual versi September 2025 menggunakan badan perdagangan dengan tahun buku nonkalender; bukan jawaban baku untuk semua badan UMKM.'}
       </p>
+      <SptPreparationChecklist kind={kind} />
+      {!steps.length && <p className="mt-4 text-sm text-muted-foreground" data-testid="text-spt-sources-unavailable">Rujukan panduan belum tersedia. Daftar periksa lokal tetap dapat digunakan, tetapi periksa langkah, versi panduan, dan ketentuan di portal resmi DJP.</p>}
       <div className="mt-4 space-y-3" aria-live="polite">
         {steps.map((r, index) => <details key={r.id} open={index === 0 ? true : undefined}
           className="rounded-xl border border-border bg-background/50 p-4" data-testid={`details-${r.id}`}>

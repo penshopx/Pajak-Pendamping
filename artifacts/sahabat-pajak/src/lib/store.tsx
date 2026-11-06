@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MAX_TRANSACTIONS, validateTransaction, type BusinessTransaction } from './business-ledger';
 import { updateLearningCompleted, validateLearningCompleted } from './learning-path';
+import { assertSptProgress, resetSptScope, setSptItem, type SptProgress, type SptKind, type SptItemId } from './spt-preparation';
 import {
   assertTradeLedger, deleteBillInLedger, linkTransactionInLedger, recordPaymentInLedger,
   saveBillInLedger, unlinkTransactionInLedger, type TradeBill, type TradeLedger, type TradePaymentInput,
@@ -25,10 +26,10 @@ export interface ChatMessage {
   sources?: ChatSource[]; disclaimer?: string; checkedAt?: string;
 }
 
-interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[]; learningCompleted: string[] }
+interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[]; learningCompleted: string[]; sptProgress: SptProgress }
 
 const KEY = 'sahabat-pajak:v1';
-const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [], learningCompleted: [] };
+const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [], learningCompleted: [], sptProgress: {} };
 const READ_ERROR = 'Data lokal tidak dapat dibaca dengan aman. Data asli tidak dihapus. Jangan hapus data peramban; pulihkan cadangan atau hubungi pengelola sebelum melanjutkan.';
 
 export const TAX_TYPES = [
@@ -48,6 +49,7 @@ function readState(): State {
       || new Set(p.transactions.map(t => t.id)).size !== p.transactions.length)) throw new Error(READ_ERROR);
     assertTradeLedger(p.tradeBills ?? [], p.transactions ?? []);
     if (p.learningCompleted !== undefined && !validateLearningCompleted(p.learningCompleted)) throw new Error(READ_ERROR);
+    if (p.sptProgress !== undefined) assertSptProgress(p.sptProgress);
     return {
       ...p,
       profile: { ...EMPTY.profile, ...(p.profile ?? {}) },
@@ -57,6 +59,7 @@ function readState(): State {
       transactions: p.transactions ?? [],
       tradeBills: p.tradeBills ?? [],
       learningCompleted: p.learningCompleted ?? [],
+      sptProgress: p.sptProgress ?? {},
     };
   } catch { throw new Error(READ_ERROR); }
 }
@@ -68,6 +71,8 @@ function load() {
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
 interface Ctx extends State {
+  setSptChecked: (kind: SptKind, year: number, item: SptItemId, checked: boolean) => void;
+  resetSptProgress: (kind: SptKind, year: number) => void;
   setProfile: (p: Profile) => void;
   saveObligation: (o: Omit<Obligation, 'id'> & { id?: string }) => void;
   deleteObligation: (id: string) => void;
@@ -142,6 +147,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const addChat = useCallback((m: ChatMessage) => setState((s) => ({ ...s, chat: [...s.chat, m].slice(-60) })), []);
   const clearChat = useCallback(() => setState((s) => ({ ...s, chat: [] })), []);
   const clearAll = useCallback(() => persist(() => EMPTY, true), [persist]);
+  const setSptChecked = useCallback((kind: SptKind, year: number, item: SptItemId, checked: boolean) =>
+    setState(s => ({ ...s, sptProgress: setSptItem(s.sptProgress, kind, year, item, checked) })), [setState]);
+  const resetSptProgress = useCallback((kind: SptKind, year: number) =>
+    setState(s => ({ ...s, sptProgress: resetSptScope(s.sptProgress, kind, year) })), [setState]);
   const saveTransaction = useCallback((input: Omit<BusinessTransaction, 'id'> & { id?: string }) => setState(s => {
     const previous = s.transactions.find(t => t.id === input.id);
     if (input.tradeBillId !== undefined && input.tradeBillId !== previous?.tradeBillId) {
@@ -198,11 +207,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const hasDemo = state.obligations.some((x) => x.demo) || state.payments.some((x) => x.demo);
   const value = useMemo<Ctx>(() => ({
-    ...state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
+    ...state, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
     addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
     saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction,
     setLearningComplete, resetLearningProgress,
-  }), [state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
+  }), [state, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
     saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction, setLearningComplete, resetLearningProgress]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;

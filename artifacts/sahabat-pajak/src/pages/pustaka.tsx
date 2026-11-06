@@ -60,7 +60,7 @@ export default function Pustaka() {
       </Link>
       <Notice icon={BookOpenCheck}>Informasi konsultan pajak dan PJAP adalah rujukan edukasi. Sahabat Pajak tidak mengklaim izin praktik konsultan, penunjukan sebagai PJAP, atau verifikasi izin pihak tertentu. Periksa status dan saluran layanan melalui sumber resmi.</Notice>
 
-      {!isLoading && !isError && data?.length ? <div className="mt-5 space-y-3">
+      <div className="mt-5 space-y-3">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Panduan praktis">
           {(['spt', 'akses'] as const).map((value) => <button type="button" key={value} aria-pressed={guide === value}
             onClick={() => setGuide(value)} data-testid={`button-library-guide-${value}`}
@@ -68,8 +68,8 @@ export default function Pustaka() {
             {value === 'spt' ? 'Panduan pelaporan SPT' : 'Akses Coretax & KODJP'}
           </button>)}
         </div>
-        {guide === 'spt' ? <SptReportingGuide resources={data} /> : <CoretaxAccessGuide resources={data} />}
-      </div> : null}
+        {guide === 'spt' ? <SptReportingGuide resources={data ?? []} /> : <CoretaxAccessGuide resources={data ?? []} />}
+      </div>
 
       <div className="rise sticky top-14 md:top-0 z-20 -mx-4 mb-6 space-y-3 bg-background/85 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="relative">

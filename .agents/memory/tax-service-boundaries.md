@@ -68,3 +68,9 @@ Baseline pemantauan baru tidak boleh disetujui otomatis hanya untuk mempertahank
 **Why:** Mengambil hash pertama tidak membuktikan bahwa dokumen yang diunduh cocok dengan cuplikan kurasi lama. Dalam layanan edukasi pajak, menahan jawaban lebih aman daripada memberi kepastian dari baseline yang belum diperiksa.
 
 **How to apply:** Jangan mengisi persetujuan baseline lewat seed, migrasi, atau keputusan agen tanpa pembacaan dan keputusan peninjau yang nyata; sediakan antrean operator untuk persetujuan tersebut.
+
+Progres persiapan SPT adalah pengakuan pengguna, bukan status pelaporan yang diverifikasi; BPE tetap diperiksa sendiri di portal resmi.
+
+**Why:** Pengguna meminta kemampuan melanjutkan persiapan tanpa menjadikan centang sebagai bukti SPT terkirim atau validasi DJP.
+
+**How to apply:** Pertahankan batas ini saat menambah ringkasan, pengingat, ekspor, atau pemulihan progres; jangan menyimpulkan kewajiban telah dilaporkan dari daftar periksa.
