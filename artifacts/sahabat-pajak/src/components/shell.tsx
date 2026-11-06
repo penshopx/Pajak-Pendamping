@@ -1,11 +1,16 @@
-import { type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { LayoutGrid, MessagesSquare, CalendarClock, Receipt, Library, Settings2, HardDrive } from 'lucide-react';
+import { LayoutGrid, MessagesSquare, CalendarClock, Receipt, Library, Settings2, HardDrive, Wallet, FileSpreadsheet, Menu, AlertTriangle, ArrowLeftRight } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
+const tid = (l: string) => l.toLowerCase().replace(/&/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+const PRIMARY_MOBILE = ['/', '/kewajiban', '/transaksi', '/konsultasi'];
 const NAV = [
   { href: '/', label: 'Ringkasan', icon: LayoutGrid },
   { href: '/kewajiban', label: 'Kewajiban', icon: CalendarClock },
+  { href: '/transaksi', label: 'Transaksi', icon: Wallet },
+  { href: '/piutang-utang', label: 'Piutang & Utang', icon: ArrowLeftRight },
+  { href: '/laba-rugi', label: 'Laba Rugi', icon: FileSpreadsheet },
   { href: '/pembayaran', label: 'Pembayaran', icon: Receipt },
   { href: '/konsultasi', label: 'Konsultasi', icon: MessagesSquare },
   { href: '/pustaka', label: 'Pustaka', icon: Library },
@@ -23,8 +28,11 @@ export function Mark({ className = '' }: { className?: string }) {
 
 export function Shell({ children }: { children: ReactNode }) {
   const [loc] = useLocation();
-  const { profile, hasDemo } = useStore();
+  const { profile, hasDemo, storageError } = useStore();
+  const [more, setMore] = useState(false);
+  useEffect(() => { setMore(false); }, [loc]);
   const active = (h: string) => (h === '/' ? loc === '/' : loc.startsWith(h));
+  const moreActive = NAV.some((n) => !PRIMARY_MOBILE.includes(n.href) && active(n.href));
   return (
     <div className="relative z-10 min-h-[100dvh] md:grid md:grid-cols-[248px_1fr]">
       <aside className="hidden md:flex sticky top-0 h-[100dvh] flex-col border-r border-sidebar-border bg-sidebar/80 backdrop-blur px-4 py-6">
@@ -37,7 +45,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </Link>
         <nav className="flex flex-col gap-1" aria-label="Navigasi utama">
           {NAV.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} data-testid={`nav-${label.toLowerCase()}`}
+            <Link key={href} href={href} data-testid={`nav-${tid(label)}`}
               aria-current={active(href) ? 'page' : undefined}
               className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium transition-colors ${active(href) ? 'bg-sidebar-accent text-white' : 'text-sidebar-foreground/80 hover:text-white hover:bg-sidebar-accent/60'}`}>
               <span className={`absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-primary transition-transform duration-300 origin-center ${active(href) ? 'scale-y-100' : 'scale-y-0'}`} />
@@ -61,16 +69,41 @@ export function Shell({ children }: { children: ReactNode }) {
       </header>
 
       <main className="min-w-0 px-4 pb-28 pt-6 sm:px-8 md:pb-12 md:pt-10 lg:px-12">
-        <div className="mx-auto max-w-6xl">{children}</div>
+        <div className="mx-auto max-w-6xl">
+          {storageError && (
+            <div role="alert" className="mb-6 flex gap-3 rounded-xl border border-destructive/60 bg-destructive/15 px-4 py-3 text-sm text-white" data-testid="text-storage-error">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+              <div><b>Perubahan belum tersimpan.</b> {storageError} Periksa pesan ini sebelum mencoba lagi. Ekspor catatan yang masih terlihat melalui <Link href="/pengaturan" className="font-semibold text-accent underline underline-offset-4" data-testid="link-storage-error-settings">Pengaturan</Link>.</div>
+            </div>
+          )}
+          {children}
+        </div>
       </main>
 
-      <nav aria-label="Navigasi utama" className="md:hidden fixed bottom-0 inset-x-0 z-30 grid grid-cols-6 border-t border-border bg-sidebar/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
-        {NAV.map(({ href, label, icon: Icon }) => (
-          <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} data-testid={`mnav-${label.toLowerCase()}`}
-            className={`press flex flex-col items-center gap-1 py-2.5 text-[10px] font-medium ${active(href) ? 'text-primary' : 'text-muted-foreground'}`}>
+      {more && (
+        <div className="md:hidden fixed inset-0 z-40" role="dialog" aria-modal="true" aria-label="Menu lainnya">
+          <button className="absolute inset-0 bg-background/70 backdrop-blur-sm" aria-label="Tutup menu" onClick={() => setMore(false)} data-testid="button-close-more" />
+          <nav aria-label="Semua menu" className="rise absolute inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] grid grid-cols-2 gap-1.5 rounded-2xl border border-border bg-sidebar p-2">
+            {NAV.map(({ href, label, icon: Icon }) => (
+              <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} data-testid={`mnav-more-${tid(label)}`}
+                className={`press flex items-center gap-2.5 rounded-xl px-3 py-3 text-sm font-semibold ${active(href) ? 'bg-sidebar-accent text-white' : 'text-foreground/85'}`}>
+                <Icon className={`h-[18px] w-[18px] ${active(href) ? 'text-primary' : ''}`} />{label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
+      <nav aria-label="Navigasi utama" className="md:hidden fixed bottom-0 inset-x-0 z-50 grid grid-cols-5 border-t border-border bg-sidebar/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
+        {NAV.filter((n) => PRIMARY_MOBILE.includes(n.href)).map(({ href, label, icon: Icon }) => (
+          <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} data-testid={`mnav-${tid(label)}`}
+            className={`press flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${active(href) ? 'text-primary' : 'text-foreground/75'}`}>
             <Icon className="h-5 w-5" />{label}
           </Link>
         ))}
+        <button type="button" onClick={() => setMore((m) => !m)} aria-expanded={more} data-testid="mnav-lainnya"
+          className={`press flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${more || moreActive ? 'text-primary' : 'text-foreground/75'}`}>
+          <Menu className="h-5 w-5" />Lainnya
+        </button>
       </nav>
     </div>
   );

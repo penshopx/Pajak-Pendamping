@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { transactionCSV } from '@/lib/business-ledger';
+import { tradeBillsCSV } from '@/lib/trade-ledger';
 
 export default function Pengaturan() {
   usePageTitle('Pengaturan');
@@ -19,7 +21,7 @@ export default function Pengaturan() {
   const dirty = name.trim() !== s.profile.businessName || type !== s.profile.businessType;
 
   const exportJSON = () => {
-    downloadFile(`sahabat-pajak-${todayISO()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), note: 'Data lokal Sahabat Pajak. Tidak diverifikasi DJP.', profile: s.profile, obligations: s.obligations, payments: s.payments }, null, 2), 'application/json');
+    downloadFile(`sahabat-pajak-${todayISO()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), note: 'Data lokal Sahabat Pajak. Tidak diverifikasi DJP. Transaksi usaha adalah rekap kas dan penyesuaian HPP manual, bukan penghasilan kena pajak. Tagihan belum dibayar tidak otomatis masuk laba rugi.', profile: s.profile, obligations: s.obligations, payments: s.payments, transactions: s.transactions, tradeBills: s.tradeBills }, null, 2), 'application/json');
     toast({ title: 'JSON diunduh' });
   };
   const exportCSV = (kind: 'kewajiban' | 'pembayaran') => {
@@ -64,11 +66,23 @@ export default function Pengaturan() {
 
         <section className="rise rounded-2xl border border-border bg-card p-5 sm:p-6" aria-labelledby="exp-h">
           <h2 id="exp-h" className="text-xl font-bold text-white flex items-center gap-2"><Download className="h-5 w-5 text-primary" />Ekspor data</h2>
-          <p className="mt-1 text-sm text-muted-foreground"><span className="num text-foreground">{s.obligations.length}</span> kewajiban, <span className="num text-foreground">{s.payments.length}</span> pembayaran tersimpan.</p>
+          <p className="mt-1 text-sm text-muted-foreground"><span className="num text-foreground">{s.obligations.length}</span> kewajiban, <span className="num text-foreground">{s.payments.length}</span> pembayaran, <span className="num text-foreground">{s.transactions.length}</span> transaksi usaha, <span className="num text-foreground">{s.tradeBills.length}</span> tagihan piutang/utang tersimpan.</p>
           <div className="mt-5 grid gap-2">
-            <ExportBtn icon={FileJson} title="Semua data (JSON)" desc="Profil, kewajiban, pembayaran" onClick={exportJSON} id="json" />
+            <ExportBtn icon={FileJson} title="Semua catatan usaha (JSON)" desc="Profil, kewajiban, pembayaran, transaksi, piutang/utang; tanpa riwayat chat" onClick={exportJSON} id="json" />
             <ExportBtn icon={FileSpreadsheet} title="Kewajiban (CSV)" desc="Buka di Excel atau Google Sheets" onClick={() => exportCSV('kewajiban')} id="csv-obligations" />
             <ExportBtn icon={FileSpreadsheet} title="Pembayaran (CSV)" desc="Termasuk NTPN yang Anda catat" onClick={() => exportCSV('pembayaran')} id="csv-payments" />
+            <ExportBtn icon={FileSpreadsheet} title="Transaksi usaha (CSV)" desc="Seluruh periode, pemasukan dan pengeluaran" id="csv-transactions"
+              onClick={() => {
+                if (!s.transactions.length) { toast({ title: 'Belum ada transaksi untuk diekspor' }); return; }
+                downloadFile(`sahabat-pajak-transaksi-${todayISO()}.csv`, transactionCSV(s.transactions), 'text/csv;charset=utf-8');
+                toast({ title: 'CSV transaksi diunduh', description: `${s.transactions.length} baris, seluruh periode.` });
+              }} />
+            <ExportBtn icon={FileSpreadsheet} title="Piutang dan utang usaha (CSV)" desc="Seluruh tagihan, nilai terbayar, dan sisa saat ini" id="csv-trade-bills"
+              onClick={() => {
+                if (!s.tradeBills.length) { toast({ title: 'Belum ada piutang atau utang untuk diekspor' }); return; }
+                downloadFile(`sahabat-pajak-piutang-utang-${todayISO()}.csv`, tradeBillsCSV(s.tradeBills, s.transactions, todayISO()), 'text/csv;charset=utf-8');
+                toast({ title: 'CSV piutang dan utang diunduh', description: `${s.tradeBills.length} tagihan, seluruh periode.` });
+              }} />
           </div>
         </section>
 
@@ -84,7 +98,7 @@ export default function Pengaturan() {
 
         <section className="rise rounded-2xl border border-destructive/40 bg-card p-5 sm:p-6" aria-labelledby="del-h">
           <h2 id="del-h" className="text-xl font-bold text-white">Hapus semua data</h2>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Profil, kewajiban, pembayaran, dan riwayat konsultasi dihapus dari peramban ini.</p>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Profil, kewajiban, pembayaran, transaksi usaha, piutang/utang, dan riwayat konsultasi dihapus dari peramban ini.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Confirm title="Hapus riwayat konsultasi?" desc="Percakapan tersimpan akan dihapus." confirmLabel="Hapus riwayat" onConfirm={() => { s.clearChat(); toast({ title: 'Riwayat dihapus' }); }}
               trigger={<Button variant="outline" className="border-input" data-testid="button-clear-chat-settings">Hapus riwayat chat</Button>} />

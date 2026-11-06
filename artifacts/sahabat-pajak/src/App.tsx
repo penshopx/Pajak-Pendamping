@@ -10,6 +10,9 @@ import Kewajiban from '@/pages/kewajiban';
 import Pembayaran from '@/pages/pembayaran';
 import Pustaka from '@/pages/pustaka';
 import Pengaturan from '@/pages/pengaturan';
+import Transaksi from '@/pages/transaksi';
+import LabaRugi from '@/pages/laba-rugi';
+import PiutangUtang from '@/pages/piutang-utang';
 import { Shell } from '@/components/shell';
 import { StoreProvider } from '@/lib/store';
 import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -25,6 +28,9 @@ function Router() {
           <Route path="/konsultasi" component={Konsultasi} />
           <Route path="/kewajiban" component={Kewajiban} />
           <Route path="/pembayaran" component={Pembayaran} />
+          <Route path="/transaksi" component={Transaksi} />
+          <Route path="/laba-rugi" component={LabaRugi} />
+          <Route path="/piutang-utang" component={PiutangUtang} />
           <Route path="/pustaka" component={Pustaka} />
           <Route path="/pengaturan" component={Pengaturan} />
           <Route component={NotFound} />

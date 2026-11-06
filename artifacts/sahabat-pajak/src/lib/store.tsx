@@ -1,4 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { MAX_TRANSACTIONS, validateTransaction, type BusinessTransaction } from './business-ledger';
+import {
+  assertTradeLedger, deleteBillInLedger, linkTransactionInLedger, recordPaymentInLedger,
+  saveBillInLedger, unlinkTransactionInLedger, type TradeBill, type TradeLedger, type TradePaymentInput,
+} from './trade-ledger';
 
 export type BusinessType = 'orang-pribadi' | 'badan';
 export interface Profile { businessName: string; businessType: BusinessType }
@@ -19,27 +24,42 @@ export interface ChatMessage {
   sources?: ChatSource[]; disclaimer?: string; checkedAt?: string;
 }
 
-interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[] }
+interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[] }
 
 const KEY = 'sahabat-pajak:v1';
-const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [] };
+const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [] };
+const READ_ERROR = 'Data lokal tidak dapat dibaca dengan aman. Data asli tidak dihapus. Jangan hapus data peramban; pulihkan cadangan atau hubungi pengelola sebelum melanjutkan.';
 
 export const TAX_TYPES = [
   'PPh Final UMKM', 'PPh 21', 'PPh 23', 'PPh 25', 'PPh 4 ayat (2)', 'PPh Tahunan (SPT)', 'PPN', 'PBB', 'Lainnya',
 ];
 
-function load(): State {
+function readState(): State {
+  const raw = localStorage.getItem(KEY);
+  if (!raw) return EMPTY;
   try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return EMPTY;
     const p = JSON.parse(raw) as Partial<State>;
+    if (!p || typeof p !== 'object' || Array.isArray(p)) throw new Error(READ_ERROR);
+    for (const key of ['obligations', 'payments', 'chat', 'transactions', 'tradeBills'] as const) {
+      if (p[key] !== undefined && !Array.isArray(p[key])) throw new Error(READ_ERROR);
+    }
+    if (p.transactions && (p.transactions.length > MAX_TRANSACTIONS || !p.transactions.every(validateTransaction)
+      || new Set(p.transactions.map(t => t.id)).size !== p.transactions.length)) throw new Error(READ_ERROR);
+    assertTradeLedger(p.tradeBills ?? [], p.transactions ?? []);
     return {
+      ...p,
       profile: { ...EMPTY.profile, ...(p.profile ?? {}) },
       obligations: Array.isArray(p.obligations) ? p.obligations : [],
       payments: Array.isArray(p.payments) ? p.payments : [],
       chat: Array.isArray(p.chat) ? p.chat : [],
+      transactions: p.transactions ?? [],
+      tradeBills: p.tradeBills ?? [],
     };
-  } catch { return EMPTY; }
+  } catch { throw new Error(READ_ERROR); }
+}
+function load() {
+  try { return { state: readState(), error: null as string | null }; }
+  catch { return { state: EMPTY, error: READ_ERROR }; }
 }
 
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -57,13 +77,49 @@ interface Ctx extends State {
   removeDemo: () => void;
   clearAll: () => void;
   hasDemo: boolean;
+  storageError: string | null;
+  saveTransaction: (t: Omit<BusinessTransaction, 'id'> & { id?: string }) => void;
+  deleteTransaction: (id: string) => void;
+  saveTradeBill: (b: Omit<TradeBill, 'id'> & { id?: string }) => void;
+  deleteTradeBill: (id: string) => void;
+  recordTradePayment: (input: TradePaymentInput) => void;
+  linkTradeTransaction: (billId: string, transactionId: string) => void;
+  unlinkTradeTransaction: (transactionId: string) => void;
 }
 
 const StoreCtx = createContext<Ctx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>(load);
-  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* storage full or blocked */ } }, [state]);
+  const [initial] = useState(load);
+  const [state, setInternalState] = useState<State>(initial.state);
+  const [storageError, setStorageError] = useState<string | null>(initial.error);
+  // Persist before announcing success; no mount-time write may replace unreadable data.
+  // Re-read the latest browser snapshot so a delayed storage event cannot lose another tab's entries.
+  const persist = useCallback((update: (s: State) => State, reset = false) => {
+    try {
+      const next = update(reset ? EMPTY : readState());
+      localStorage.setItem(KEY, JSON.stringify(next));
+      setInternalState(next);
+      setStorageError(null);
+    } catch (error) {
+      const message = error instanceof Error && error.message === READ_ERROR
+        ? READ_ERROR : error instanceof Error && !(error instanceof DOMException)
+          ? error.message : 'Penyimpanan peramban gagal. Perubahan tidak disimpan. Ekspor catatan yang masih terlihat dan periksa kapasitas/izin penyimpanan.';
+      setStorageError(message);
+      throw new Error(message);
+    }
+  }, []);
+  const setState = useCallback((update: (s: State) => State) => persist(update), [persist]);
+  useEffect(() => {
+    const sync = (event: StorageEvent) => {
+      if (event.key !== KEY && event.key !== null) return;
+      const latest = load();
+      setStorageError(latest.error);
+      if (!latest.error) setInternalState(latest.state);
+    };
+    window.addEventListener('storage', sync);
+    return () => window.removeEventListener('storage', sync);
+  }, []);
 
   const upsert = <T extends { id: string }>(list: T[], item: T) =>
     list.some((x) => x.id === item.id) ? list.map((x) => (x.id === item.id ? item : x)) : [item, ...list];
@@ -80,7 +136,38 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const deletePayment = useCallback((id: string) => setState((s) => ({ ...s, payments: s.payments.filter((x) => x.id !== id) })), []);
   const addChat = useCallback((m: ChatMessage) => setState((s) => ({ ...s, chat: [...s.chat, m].slice(-60) })), []);
   const clearChat = useCallback(() => setState((s) => ({ ...s, chat: [] })), []);
-  const clearAll = useCallback(() => setState(EMPTY), []);
+  const clearAll = useCallback(() => persist(() => EMPTY, true), [persist]);
+  const saveTransaction = useCallback((input: Omit<BusinessTransaction, 'id'> & { id?: string }) => setState(s => {
+    const previous = s.transactions.find(t => t.id === input.id);
+    if (input.tradeBillId !== undefined && input.tradeBillId !== previous?.tradeBillId) {
+      throw new Error('Tautkan transaksi melalui menu Piutang & Utang agar kas tidak dicatat dua kali.');
+    }
+    const transaction = { ...input, id: input.id ?? uid(), tradeBillId: previous?.tradeBillId, description: input.description.trim(), notes: input.notes.trim() };
+    if (!validateTransaction(transaction)) throw new Error('Periksa tanggal, uraian, kategori, dan nominal rupiah bulat yang lebih dari nol.');
+    if (input.id && !s.transactions.some(t => t.id === input.id)) throw new Error('Transaksi sudah berubah atau dihapus. Muat ulang daftar sebelum menyunting.');
+    if (!input.id && s.transactions.length >= MAX_TRANSACTIONS) throw new Error(`Batas ${MAX_TRANSACTIONS} transaksi lokal tercapai. Ekspor catatan sebelum melanjutkan.`);
+    const transactions = upsert(s.transactions, transaction);
+    assertTradeLedger(s.tradeBills, transactions);
+    return { ...s, transactions };
+  }), [setState]);
+  const deleteTransaction = useCallback((id: string) => setState(s => {
+    if (!s.transactions.some(t => t.id === id)) throw new Error('Transaksi sudah dihapus. Muat ulang daftar.');
+    return { ...s, transactions: s.transactions.filter(t => t.id !== id) };
+  }), [setState]);
+  // Invoice changes and cash settlements share one storage commit: never persist
+  // a paid balance separately from the cash entry that supports it.
+  const updateTrade = useCallback((change: (ledger: TradeLedger) => TradeLedger) =>
+    setState(s => ({ ...s, ...change(s) })), [setState]);
+  const saveTradeBill = useCallback((input: Omit<TradeBill, 'id'> & { id?: string }) => updateTrade(s =>
+    saveBillInLedger(s, {
+      ...input, id: input.id ?? uid(), party: input.party.trim(), reference: input.reference.trim(),
+      description: input.description.trim(), notes: input.notes.trim(),
+    }, Boolean(input.id))), [updateTrade]);
+  const deleteTradeBill = useCallback((id: string) => updateTrade(s => deleteBillInLedger(s, id)), [updateTrade]);
+  const recordTradePayment = useCallback((input: TradePaymentInput) => updateTrade(s => recordPaymentInLedger(s, input)), [updateTrade]);
+  const linkTradeTransaction = useCallback((billId: string, transactionId: string) =>
+    updateTrade(s => linkTransactionInLedger(s, billId, transactionId)), [updateTrade]);
+  const unlinkTradeTransaction = useCallback((id: string) => updateTrade(s => unlinkTransactionInLedger(s, id)), [updateTrade]);
   const removeDemo = useCallback(() => setState((s) => ({
     ...s, obligations: s.obligations.filter((x) => !x.demo), payments: s.payments.filter((x) => !x.demo),
   })), []);
@@ -103,8 +190,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const hasDemo = state.obligations.some((x) => x.demo) || state.payments.some((x) => x.demo);
   const value = useMemo<Ctx>(() => ({
     ...state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
-    addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo,
-  }), [state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo]);
+    addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
+    saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction,
+  }), [state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
+    saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
