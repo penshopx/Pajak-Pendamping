@@ -3,3 +3,4 @@
 - [Batas rekap keuangan](financial-recap-boundaries.md) — rekap manajemen bukan pajak terutang; pengakuan HPP tidak boleh mengurangi kas dua kali.
 - [Penilai jawaban pajak](tax-evaluation-caveats.md) — kalibrasikan penilai sebelum menafsirkan kegagalan; batas diri bukan klaim hukum tanpa bukti.
 - [Verifikasi lokal](local-verification.md) — CLI yang tidak diekspos ke PATH artefak belum tentu berarti compiler tidak terpasang.
+- [Kompatibilitas cadangan](backup-compatibility.md) — bagian absen bukan permintaan hapus; penggabungan mendahulukan catatan lokal karena cadangan tidak punya waktu sunting tepercaya.

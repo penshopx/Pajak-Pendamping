@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MAX_TRANSACTIONS, validateTransaction, type BusinessTransaction } from './business-ledger';
+import { buildRestore, restoreSnapshot, type BackupData, type RestoreMode } from './backup';
 import { updateLearningCompleted, validateLearningCompleted } from './learning-path';
 import { assertSptProgress, resetSptScope, setSptItem, type SptProgress, type SptKind, type SptItemId } from './spt-preparation';
 import {
@@ -71,6 +72,7 @@ function load() {
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
 interface Ctx extends State {
+  restoreBackup: (backup: BackupData, mode: RestoreMode, expectedSnapshot: string) => void;
   setSptChecked: (kind: SptKind, year: number, item: SptItemId, checked: boolean) => void;
   resetSptProgress: (kind: SptKind, year: number) => void;
   setProfile: (p: Profile) => void;
@@ -147,6 +149,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const addChat = useCallback((m: ChatMessage) => setState((s) => ({ ...s, chat: [...s.chat, m].slice(-60) })), []);
   const clearChat = useCallback(() => setState((s) => ({ ...s, chat: [] })), []);
   const clearAll = useCallback(() => persist(() => EMPTY, true), [persist]);
+  const restoreBackup = useCallback((backup: BackupData, mode: RestoreMode, expectedSnapshot: string) =>
+    setState(current => {
+      if (restoreSnapshot(current) !== expectedSnapshot) {
+        throw new Error('Catatan lokal berubah sejak pratinjau. Tutup konfirmasi dan periksa pratinjau terbaru sebelum memulihkan.');
+      }
+      return buildRestore(current, backup, mode);
+    }), [setState]);
   const setSptChecked = useCallback((kind: SptKind, year: number, item: SptItemId, checked: boolean) =>
     setState(s => ({ ...s, sptProgress: setSptItem(s.sptProgress, kind, year, item, checked) })), [setState]);
   const resetSptProgress = useCallback((kind: SptKind, year: number) =>
@@ -207,11 +216,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const hasDemo = state.obligations.some((x) => x.demo) || state.payments.some((x) => x.demo);
   const value = useMemo<Ctx>(() => ({
-    ...state, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
+    ...state, restoreBackup, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
     addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
     saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction,
     setLearningComplete, resetLearningProgress,
-  }), [state, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
+  }), [state, restoreBackup, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
     saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction, setLearningComplete, resetLearningProgress]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;

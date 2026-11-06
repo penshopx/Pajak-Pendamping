@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { transactionCSV } from '@/lib/business-ledger';
 import { tradeBillsCSV } from '@/lib/trade-ledger';
 import { learningSummary } from '@/lib/learning-path';
+import { BackupRestore } from '@/components/backup-restore';
 
 export default function Pengaturan() {
   usePageTitle('Pengaturan');
@@ -87,6 +88,8 @@ export default function Pengaturan() {
               }} />
           </div>
         </section>
+
+        <BackupRestore />
 
         <section className="rise rounded-2xl border border-border bg-card p-5 sm:p-6" aria-labelledby="demo-h">
           <h2 id="demo-h" className="text-xl font-bold text-white flex items-center gap-2"><FlaskConical className="h-5 w-5 text-[hsl(var(--warn))]" />Data contoh</h2>
