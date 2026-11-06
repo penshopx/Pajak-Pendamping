@@ -14,6 +14,8 @@ const SUGGESTED = [
   'Apa bedanya NTPN dan kode billing?',
   'Kapan saya perlu melapor SPT Tahunan sebagai orang pribadi?',
   'Apa yang perlu disiapkan untuk mendaftar NPWP badan usaha?',
+  'Apa perbedaan konsultan pajak berizin dan PJAP?',
+  'Apa kewajiban dan larangan PJAP menurut halaman DJP?',
 ];
 
 const MIN = 5, MAX = 2000;

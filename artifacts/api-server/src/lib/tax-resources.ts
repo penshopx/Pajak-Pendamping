@@ -1,5 +1,7 @@
 // Curated excerpts, not an automatically refreshed or exhaustive legal corpus.
 // PDF entries confirm the directory listing only, not analysis of PDF contents.
+import { professionalResources } from "./tax-professional-resources";
+
 const checkedAt = "2026-11-06";
 const hub = "https://www.pajak.go.id/id/coretax";
 const pdf = "https://www.pajak.go.id/sites/default/files/";
@@ -28,6 +30,13 @@ export const taxResources = [
   resource("ppn", "Pelaporan SPT Masa PPN", "Pelaporan SPT", "Manual resmi pelaporan SPT Masa PPN.", pdf + "2025-04/Buku%20Manual%20SPT%20Masa%20PPN.pdf", "Manual PDF", "Direktori Coretax menyediakan Buku Manual Coretax 2024 - Pelaporan SPT Masa PPN. Isi PDF belum dianalisis."),
   resource("nppn", "Pemberitahuan penggunaan NPPN", "Panduan Ringkas", "Panduan pemberitahuan penggunaan Norma Penghitungan Penghasilan Neto.", pdf + "2025-03/Panduan%20Pemberitahuan%20Penggunaan%20NPPN.pdf", "Manual PDF", "Direktori resmi mencantumkan panduan pemberitahuan penggunaan NPPN. Kelayakan dan ketentuan penggunaannya tidak tersedia dalam cuplikan ini; jangan menyimpulkan semua UMKM bisa menggunakan NPPN."),
   resource("services", "Layanan wajib pajak", "Layanan", "Manual layanan perpajakan melalui Coretax.", pdf + "2024-09/Buku%20Manual%20Coretax%202024%20-%2019%20Layanan%20Wajib%20Pajak_1.pdf", "Manual PDF", "Direktori resmi Coretax menyediakan Buku Manual Coretax 2024 - Layanan WP. Isi PDF belum dianalisis."),
+  resource("implementation-short", "Buku Panduan Singkat Implementasi Coretax bagi Wajib Pajak", "Panduan Ringkas", "Panduan singkat implementasi dalam direktori resmi DJP.", pdf + "2024-12/Buku%20Panduan%20Singkat%20Coretax%20v.1.pdf", "Manual PDF", "Terdaftar pada Seri Panduan Ringkas di halaman Coretax DJP yang diperiksa. Isi PDF belum dianalisis; gunakan naskah asli dan periksa kesesuaian versi."),
+  resource("efaktur-faq", "Buku FAQ Aplikasi E-Faktur Client Desktop", "Panduan Ringkas", "FAQ resmi aplikasi E-Faktur Client Desktop.", pdf + "2025-02/FAQ%20Aplikasi%20E-Faktur%20Client%20Desktop.pdf", "Manual PDF", "Direktori Coretax DJP mencantumkan Buku FAQ Aplikasi E-Faktur Client Desktop. Isi PDF belum dianalisis; daftar ini tidak memastikan apakah mekanisme desktop sesuai untuk kasus pengguna saat ini."),
+  resource("investment-report", "Buku Cara Lapor Realisasi Investasi pada Aplikasi Coretax", "Panduan Ringkas", "Rujukan pelaporan realisasi investasi pada Coretax.", pdf + "2025-03/Cara_Lapor_Realisasi_Investasi_pada_Aplikasi_Coretax.pdf", "Manual PDF", "Terdaftar dalam Seri Panduan Ringkas Coretax DJP. Isi PDF belum dianalisis; jangan menyimpulkan persyaratan fasilitas atau batas pelaporan dari judul."),
+  resource("registration-resident", "Leaflet Pendaftaran Wajib Pajak Orang Pribadi Penduduk", "Registrasi", "Leaflet pendaftaran WP orang pribadi penduduk yang ditautkan DJP.", pdf + "2026-01/Leaflet%20Pendaftaran%20WP%20OP%20pada%20Coretax%20v20260105_0.pdf", "Leaflet PDF", "Halaman Coretax DJP menautkan Leaflet Pendaftaran WP OP Penduduk, dengan nama berkas v20260105. Isi PDF belum dianalisis; nama berkas bukan bukti semua prosedur tetap berlaku."),
+  resource("kodjp", "Leaflet Panduan Memperoleh KODJP", "Registrasi", "Panduan Kode Otorisasi DJP yang ditautkan pada halaman Coretax.", pdf + "2025-12/Leaflet%20Panduan%20Memperoleh%20KODJP%20v202512_0.pdf", "Leaflet PDF", "Direktori Coretax DJP menyediakan Leaflet Panduan Memperoleh KODJP. Isi PDF belum dianalisis; langkah aktivasi atau otorisasi tidak boleh dibuat berdasarkan judul saja."),
+  resource("cbcr", "Panduan CbCR pada Coretax DJP", "Panduan Ringkas", "Rujukan khusus CbCR; tidak otomatis berlaku untuk seluruh UMKM.", pdf + "2025-07/Panduan%20CbCR%20pada%20Coretax%20DJP_0.pdf", "Manual PDF", "Direktori Coretax DJP mencantumkan Panduan CbCR. Isi PDF belum dianalisis; keberadaan panduan tidak berarti semua UMKM wajib melakukan CbCR."),
+  ...professionalResources(checkedAt),
 ];
 
-export const taxDisclaimer = "Informasi edukasi, bukan penetapan pajak atau pengganti nasihat konsultan. Sumber terbatas dan tidak diperbarui otomatis. Verifikasi ketentuan yang berlaku melalui DJP/KPP. Sahabat Pajak bukan layanan resmi DJP.";
+export const taxDisclaimer = "Informasi edukasi, bukan penetapan pajak atau pengganti nasihat konsultan. Sumber terbatas dan tidak diperbarui otomatis. Verifikasi ketentuan yang berlaku melalui DJP/KPP. Sahabat Pajak bukan layanan resmi DJP, tidak mengklaim izin praktik konsultan atau penunjukan sebagai PJAP.";

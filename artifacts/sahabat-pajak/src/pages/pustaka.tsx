@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const CATS = ['Panduan Ringkas', 'Registrasi', 'Pembayaran', 'Pelaporan SPT', 'Layanan', 'Artikel', 'Regulasi'];
+const CATS = ['Panduan Ringkas', 'Registrasi', 'Pembayaran', 'Pelaporan SPT', 'Layanan', 'Artikel', 'Regulasi', 'Konsultan Pajak', 'PJAP'];
 
 export default function Pustaka() {
   usePageTitle('Pustaka');
@@ -31,11 +31,12 @@ export default function Pustaka() {
     <>
       <PageHeader eyebrow="Pustaka" title="Sumber resmi, dikurasi"
         desc="Tautan menuju halaman asli DJP dan sumber terkait. Tidak semuanya berkekuatan hukum: artikel mencerminkan pendapat penulisnya. Baca sumber aslinya untuk ketentuan yang berlaku." />
+      <Notice icon={BookOpenCheck}>Informasi konsultan pajak dan PJAP adalah rujukan edukasi. Sahabat Pajak tidak mengklaim izin praktik konsultan, penunjukan sebagai PJAP, atau verifikasi izin pihak tertentu. Periksa status dan saluran layanan melalui sumber resmi.</Notice>
 
       <div className="rise sticky top-14 md:top-0 z-20 -mx-4 mb-6 space-y-3 bg-background/85 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="relative">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari: billing, SPT, NPWP, Coretax" aria-label="Cari pustaka"
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari: Coretax, SPT, konsultan, PJAP" aria-label="Cari pustaka"
             className="h-12 rounded-xl bg-card border-input pl-11 text-[15px]" data-testid="input-search-library" />
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Kategori">
