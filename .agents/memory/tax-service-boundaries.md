@@ -44,3 +44,9 @@ Untuk konsultasi, pertahankan cuplikan yang ditinjau manusia/agen dan batas caku
 **Why:** Aturan baru bisa menghapus batas umum lama tetapi tetap mempertahankan pemakaiannya untuk kelompok peralihan. Kutipan lama yang benar secara tekstual dapat tetap menghasilkan jawaban yang salah bila dipakai sendirian.
 
 **How to apply:** Saat memperluas sumber, tinjau keterkaitan perubahan dan peralihan pada tingkat pasal. Tanggal pemeriksaan bukan jaminan konsolidasi lengkap, dan sitasi yang valid secara format bukan bukti bahwa penafsiran AI sudah benar.
+
+Untuk SPT, jangan menyamakan penghapusan sanksi atau relaksasi dengan perubahan tanggal jatuh tempo tanpa membaca naskah keputusan.
+
+**Why:** Siaran resmi DJP tentang SPT badan tahun pajak 2025 memakai istilah “diperpanjang”, sementara penjelasannya mengacu pada penghapusan sanksi keterlambatan. Judul berita saja tidak cukup untuk menentukan akibat hukum bagi kasus pengguna.
+
+**How to apply:** Bedakan batas umum, akhir tahun buku, perpanjangan yang diajukan, dan kebijakan khusus tahun pelaporan; verifikasi naskah keputusan sebelum menetapkan tenggat aktual atau bebas sanksi.

@@ -3,6 +3,7 @@ import { reviewedTaxExcerpts, taxCheckedAt } from "./tax-excerpts";
 import { professionalResources } from "./tax-professional-resources";
 import { paymentManualSections } from "./tax-payment-manual";
 import { accessGuides } from "./tax-access-guides";
+import { sptGuides } from "./tax-spt-guides";
 // Unread entries stay explicitly directory/metadata-only.
 const checkedAt = taxCheckedAt;
 const hub = "https://www.pajak.go.id/id/coretax";
@@ -64,6 +65,7 @@ export const taxResources: TaxResource[] = [
   })),
   ...reviewedTaxExcerpts,
   ...structuredAccessGuides,
+  ...sptGuides(checkedAt),
 ];
 
 export const taxDisclaimer = "Informasi edukasi, bukan penetapan pajak atau pengganti nasihat konsultan. Sumber terbatas dan tidak diperbarui otomatis. Verifikasi ketentuan yang berlaku melalui DJP/KPP. Sahabat Pajak bukan layanan resmi DJP, tidak mengklaim izin praktik konsultan atau penunjukan sebagai PJAP.";

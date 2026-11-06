@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CoretaxAccessGuide } from '@/components/coretax-access-guide';
+import { SptReportingGuide } from '@/components/spt-reporting-guide';
 
 const CATS = ['Panduan Ringkas', 'Registrasi', 'Pembayaran', 'Pelaporan SPT', 'Layanan', 'Artikel', 'Regulasi', 'Konsultan Pajak', 'PJAP'];
 
@@ -15,6 +16,7 @@ export default function Pustaka() {
   const { data, isLoading, isError, refetch, isFetching } = useListTaxResources();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('Semua');
+  const [guide, setGuide] = useState<'spt' | 'akses'>('spt');
 
   const cats = useMemo(() => {
     const extra = (data ?? []).map((r) => r.category).filter((c) => !CATS.includes(c));
@@ -34,7 +36,16 @@ export default function Pustaka() {
         desc="Tautan menuju halaman asli DJP dan sumber terkait. Tidak semuanya berkekuatan hukum: artikel mencerminkan pendapat penulisnya. Baca sumber aslinya untuk ketentuan yang berlaku." />
       <Notice icon={BookOpenCheck}>Informasi konsultan pajak dan PJAP adalah rujukan edukasi. Sahabat Pajak tidak mengklaim izin praktik konsultan, penunjukan sebagai PJAP, atau verifikasi izin pihak tertentu. Periksa status dan saluran layanan melalui sumber resmi.</Notice>
 
-      {!isLoading && !isError && <div className="mt-5"><CoretaxAccessGuide resources={data ?? []} /></div>}
+      {!isLoading && !isError && data?.length ? <div className="mt-5 space-y-3">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Panduan praktis">
+          {(['spt', 'akses'] as const).map((value) => <button type="button" key={value} aria-pressed={guide === value}
+            onClick={() => setGuide(value)} data-testid={`button-library-guide-${value}`}
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${guide === value ? 'border-primary bg-primary/15 text-primary' : 'border-border text-muted-foreground hover:text-foreground'}`}>
+            {value === 'spt' ? 'Panduan pelaporan SPT' : 'Akses Coretax & KODJP'}
+          </button>)}
+        </div>
+        {guide === 'spt' ? <SptReportingGuide resources={data} /> : <CoretaxAccessGuide resources={data} />}
+      </div> : null}
 
       <div className="rise sticky top-14 md:top-0 z-20 -mx-4 mb-6 space-y-3 bg-background/85 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="relative">

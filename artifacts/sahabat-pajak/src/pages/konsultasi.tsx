@@ -18,6 +18,8 @@ const SUGGESTED = [
   'Apa kewajiban dan larangan PJAP menurut halaman DJP?',
   'Saya punya NPWP tetapi belum pernah memakai DJP Online. Bagaimana aktivasi Coretax?',
   'Bagaimana cara memohon dan memeriksa status Kode Otorisasi DJP?',
+  'Saya UMKM orang pribadi. Apa dokumen dan alur pelaporan SPT Tahunan, serta cara memperoleh BPE?',
+  'Bagaimana alur SPT Tahunan badan melalui akun PIC, dan apa bedanya BPE dengan bukti bayar?',
 ];
 
 const MIN = 5, MAX = 2000;

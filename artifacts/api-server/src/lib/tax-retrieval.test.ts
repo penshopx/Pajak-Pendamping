@@ -11,7 +11,7 @@ test("source catalogue validates, IDs are unique and reviewed excerpts have trac
   assert.equal(new Set(taxResources.map(r => r.id)).size, taxResources.length);
   for (const r of taxResources.filter(r => r.verification === "excerpt")) {
     assert.ok(r.locator && r.version && r.checkedAt && r.limitations);
-    assert.match(r.url, /^https:\/\/(?:jdih\.kemenkeu\.go\.id|www\.pajak\.go\.id)\//);
+    assert.match(r.url, /^https:\/\/(?:jdih\.kemenkeu\.go\.id|(?:www\.)?pajak\.go\.id)\//);
     for (const id of r.relatedIds ?? []) assert.ok(taxResources.some(s => s.id === id));
   }
 });
@@ -36,6 +36,24 @@ test("old duration is never retrieved without the rule deleting it", () => {
   const found = ids("Apakah batas 7 tahun PPh masih berlaku untuk saya?");
   assert.ok(found.includes("pp55-duration-old"));
   assert.ok(found.includes("pp20-transition"));
+});
+
+test("SPT paths retrieve read OP and badan guidance with deadline caveats", () => {
+  for (const question of [
+    "Bagaimana lapor SPT tahunan UMKM orang pribadi?",
+    "Dokumen SPT tahunan badan PIC dan BPE?",
+    "Apa tenggat SPT Tahunan tahun 2025?",
+  ]) {
+    const found = ids(question);
+    for (const id of ["spt-guide-op-flow", "spt-guide-badan-flow", "spt-guide-deadlines", "spt-guide-policy-alert"]) {
+      assert.ok(found.includes(id), `${question}: ${id}`);
+    }
+  }
+  for (const r of taxResources.filter(r => r.id.startsWith("spt-guide-") && r.verification === "excerpt")) {
+    assert.ok(r.locator && r.version);
+    assert.match(r.url, /#page=\d+$/);
+    assert.match(r.limitations ?? "", /bukan dasar kelayakan/);
+  }
 });
 
 test("CV/PT and married turnover have relevant legal support", () => {
