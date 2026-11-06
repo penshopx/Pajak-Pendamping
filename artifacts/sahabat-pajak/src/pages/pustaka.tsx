@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearch } from 'wouter';
-import { ArrowUpRight, BookOpenCheck, BookText, GraduationCap, Library, Search, TriangleAlert } from 'lucide-react';
+import { ArrowUpRight, BookOpenCheck, BookText, FileQuestion, GraduationCap, Library, Search, TriangleAlert } from 'lucide-react';
 import { useListTaxResources } from '@workspace/api-client-react';
 import { formatDate, usePageTitle } from '@/lib/format';
 import { EmptyState, Notice, PageHeader } from '@/components/shell';
@@ -57,6 +57,11 @@ export default function Pustaka() {
         className="press mb-4 flex items-center gap-3 rounded-xl border border-input bg-card px-4 py-3 text-sm hover:border-primary">
         <BookText className="h-5 w-5 shrink-0 text-accent" />
         <span><b className="text-white">Butuh arti istilah dulu?</b> <span className="text-foreground/85">Glosarium menjelaskan PKP, NTPN, BPE, omzet, dan lainnya beserta sumbernya.</span></span>
+      </Link>
+      <Link href="/sp2dk" data-testid="link-library-sp2dk"
+        className="press mb-4 flex items-center gap-3 rounded-xl border border-input bg-card px-4 py-3 text-sm hover:border-primary">
+        <FileQuestion className="h-5 w-5 shrink-0 text-accent" />
+        <span><b className="text-white">Menerima SP2DK?</b> <span className="text-foreground/85">Siapkan fakta, dokumen, dan rujukan resmi sebelum berdiskusi dengan KPP.</span></span>
       </Link>
       <Notice icon={BookOpenCheck}>Informasi konsultan pajak dan PJAP adalah rujukan edukasi. Sahabat Pajak tidak mengklaim izin praktik konsultan, penunjukan sebagai PJAP, atau verifikasi izin pihak tertentu. Periksa status dan saluran layanan melalui sumber resmi.</Notice>
 

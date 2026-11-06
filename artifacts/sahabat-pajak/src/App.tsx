@@ -11,6 +11,7 @@ import Pembayaran from '@/pages/pembayaran';
 import Pustaka from '@/pages/pustaka';
 import Belajar from '@/pages/belajar';
 import Glosarium from '@/pages/glosarium';
+import Sp2dk from '@/pages/sp2dk';
 import Pengaturan from '@/pages/pengaturan';
 import Transaksi from '@/pages/transaksi';
 import LabaRugi from '@/pages/laba-rugi';
@@ -35,6 +36,7 @@ function Router() {
           <Route path="/piutang-utang" component={PiutangUtang} />
           <Route path="/belajar" component={Belajar} />
           <Route path="/glosarium" component={Glosarium} />
+          <Route path="/sp2dk" component={Sp2dk} />
           <Route path="/pustaka" component={Pustaka} />
           <Route path="/pengaturan" component={Pengaturan} />
           <Route component={NotFound} />

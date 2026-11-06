@@ -74,3 +74,15 @@ Progres persiapan SPT adalah pengakuan pengguna, bukan status pelaporan yang div
 **Why:** Pengguna meminta kemampuan melanjutkan persiapan tanpa menjadikan centang sebagai bukti SPT terkirim atau validasi DJP.
 
 **How to apply:** Pertahankan batas ini saat menambah ringkasan, pengingat, ekspor, atau pemulihan progres; jangan menyimpulkan kewajiban telah dilaporkan dari daftar periksa.
+
+Untuk SP2DK, jangan meratakan awal jangka tanggapan menjadi tanggal penerbitan atau penerimaan surat pada semua kasus. Bedakan WP terdaftar, WP belum terdaftar, dan saluran penyampaian.
+
+**Why:** Artikel opini DJP tahun 2026 menyederhanakan awal waktu menjadi penerbitan, sedangkan naskah PMK 111/2025 membedakan kejadian menurut saluran dan status akun/WP. Perpanjangan berupa pemberitahuan tertulis yang harus diterima KPP sebelum jangka awal berakhir; bukan sekadar draf atau bukti mengirim.
+
+**How to apply:** Tinjau pasal operatif dan konteks waktunya sebelum menambah pengingat atau perhitungan tanggal. Panduan persiapan tidak menyatakan ada kurang bayar, mengakui isi surat, mengirim tanggapan, atau menjamin pengawasan ditutup.
+
+Persiapan SP2DK memakai label anonim dan dokumen kerja pengguna; jangan meminta surat asli atau identitas pajak untuk sekadar menghasilkan kerangka.
+
+**Why:** Fitur ini adalah alat persiapan edukatif, bukan pengelolaan perkara atau penyampaian resmi. Data surat dapat mengandung informasi sensitif yang tidak diperlukan untuk panduan.
+
+**How to apply:** Bila kelak menambah penyimpanan atau riwayat perkara, buat pilihan dan batas penyimpanannya jelas; jangan diam-diam menyertakan isian tanggapan dalam pertanyaan AI atau menganggap BPE SPT sebagai bukti penerimaan tanggapan SP2DK.
