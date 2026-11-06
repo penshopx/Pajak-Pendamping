@@ -50,3 +50,9 @@ Untuk SPT, jangan menyamakan penghapusan sanksi atau relaksasi dengan perubahan 
 **Why:** Siaran resmi DJP tentang SPT badan tahun pajak 2025 memakai istilah “diperpanjang”, sementara penjelasannya mengacu pada penghapusan sanksi keterlambatan. Judul berita saja tidak cukup untuk menentukan akibat hukum bagi kasus pengguna.
 
 **How to apply:** Bedakan batas umum, akhir tahun buku, perpanjangan yang diajukan, dan kebijakan khusus tahun pelaporan; verifikasi naskah keputusan sebelum menetapkan tenggat aktual atau bebas sanksi.
+
+Baseline pemantauan baru tidak boleh disetujui otomatis hanya untuk mempertahankan ketersediaan jawaban AI. Bila belum ada tinjauan manusia yang sesuai, konsultasi harus menyatakan sumber belum cukup.
+
+**Why:** Mengambil hash pertama tidak membuktikan bahwa dokumen yang diunduh cocok dengan cuplikan kurasi lama. Dalam layanan edukasi pajak, menahan jawaban lebih aman daripada memberi kepastian dari baseline yang belum diperiksa.
+
+**How to apply:** Jangan mengisi persetujuan baseline lewat seed, migrasi, atau keputusan agen tanpa pembacaan dan keputusan peninjau yang nyata; sediakan antrean operator untuk persetujuan tersebut.

@@ -10,13 +10,13 @@ const tokens = (text: string) => [...new Set(normalize(text).split(/[^\p{L}\p{N}
   .map(t => aliases[t] ?? t))];
 
 /** Local, deterministic retrieval; neither a web search nor proof of applicability. */
-export function searchTaxSources(question: string, history: { role: string; content: string }[] = []): TaxResource[] {
+export function searchTaxSources(question: string, history: { role: string; content: string }[] = [], resources: TaxResource[] = taxResources): TaxResource[] {
   // Only user context is used, and only for an apparent follow-up. AI history is not evidence.
   const followUp = /^(lalu|kalau begitu|bagaimana dengan|dan untuk|itu|terus)\b/i.test(question.trim());
   const previous = followUp ? history.filter(m => m.role === "user").slice(-1).map(m => m.content).join(" ") : "";
   const terms = tokens(`${question} ${previous}`);
   const wantsOpinion = /\b(artikel|opini|anthonie|fuad)\b/i.test(question);
-  const ranked = taxResources
+  const ranked = resources
     .filter(r => r.verification === "excerpt" || (r.verification === "page" && (r.sourceType !== "Artikel opini" || wantsOpinion)))
     .map(resource => {
       const tags = new Set(tokens(resource.topics?.join(" ") ?? resource.title));
@@ -30,12 +30,12 @@ export function searchTaxSources(question: string, history: { role: string; cont
   for (const { resource } of ranked.slice(0, 4)) {
     selected.set(resource.id, resource);
     for (const id of resource.relatedIds ?? []) {
-      const companion = taxResources.find(r => r.id === id && (r.verification === "excerpt" || r.verification === "page"));
+      const companion = resources.find(r => r.id === id && (r.verification === "excerpt" || r.verification === "page"));
       if (companion) selected.set(id, companion);
     }
   }
   if (!selected.size && !terms.length && /\bcoretax\b/i.test(question)) {
-    const portal = taxResources.find(r => r.id === "coretax");
+    const portal = resources.find(r => r.id === "coretax");
     if (portal) selected.set(portal.id, portal);
   }
   return [...selected.values()];

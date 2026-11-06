@@ -1,6 +1,8 @@
 import type { TaxResource } from "@workspace/api-zod";
 
 // Curated from the linked full texts, NOT a consolidated or exhaustive legal corpus.
+// This date describes editorial review, never an automated fetch. The monitor
+// retains observations/review snapshots separately and gates consultation use.
 // Locator is either a legal article or a PDF page (1-based, including the cover).
 export const taxCheckedAt = "2026-11-06";
 const jdih = "https://jdih.kemenkeu.go.id/api/download/";

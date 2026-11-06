@@ -68,4 +68,4 @@ export const taxResources: TaxResource[] = [
   ...sptGuides(checkedAt),
 ];
 
-export const taxDisclaimer = "Informasi edukasi, bukan penetapan pajak atau pengganti nasihat konsultan. Sumber terbatas dan tidak diperbarui otomatis. Verifikasi ketentuan yang berlaku melalui DJP/KPP. Sahabat Pajak bukan layanan resmi DJP, tidak mengklaim izin praktik konsultan atau penunjukan sebagai PJAP.";
+export const taxDisclaimer = "Informasi edukasi, bukan penetapan pajak atau pengganti nasihat konsultan. Sumber terbatas; pemeriksaan otomatis hanya menandai perubahan, bukan memperbarui cuplikan atau memverifikasi hukum. Cuplikan konsultasi memerlukan tinjauan manusia. Tidak menjamin konsolidasi lengkap. Verifikasi ketentuan yang berlaku melalui DJP/KPP. Sahabat Pajak bukan layanan resmi DJP, tidak mengklaim izin praktik konsultan atau penunjukan sebagai PJAP.";

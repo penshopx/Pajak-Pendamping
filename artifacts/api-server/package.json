@@ -8,6 +8,8 @@
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "tax:monitor": "esbuild src/tax-monitor-cli.ts --bundle --platform=node --external:pg-native --external:pino --format=cjs --outfile=dist/tax-monitor-cli.cjs && node dist/tax-monitor-cli.cjs",
+    "test:monitor": "esbuild src/lib/tax-source-monitor.test.ts --bundle --platform=node --format=esm --outfile=../../generated-artifacts/tests/tax-monitor.test.mjs && node --test ../../generated-artifacts/tests/tax-monitor.test.mjs",
     "test:tax": "esbuild src/lib/tax-retrieval.test.ts --bundle --platform=node --format=esm --outfile=../../generated-artifacts/tests/tax.test.mjs && node --test ../../generated-artifacts/tests/tax.test.mjs"
   },
   "dependencies": {

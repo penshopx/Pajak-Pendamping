@@ -3,6 +3,7 @@ import { ConsultTaxBody, ConsultTaxResponse, ListTaxResourcesResponse } from "@w
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { taxResources, taxDisclaimer } from "../lib/tax-resources";
 import { taxCheckedAt } from "../lib/tax-excerpts";
+import { consultationSources } from "../lib/tax-source-monitor";
 import { appStatusAnswer, groundedResponse, insufficientSourcesAnswer, searchTaxSources, sourceContext } from "../lib/tax-retrieval";
 
 const router: IRouter = Router();
@@ -39,7 +40,7 @@ router.post("/tax/consult", async (req, res): Promise<void> => {
       res.json(ConsultTaxResponse.parse({ answer: internalAnswer, sources: [], disclaimer: taxDisclaimer, checkedAt: taxCheckedAt }));
       return;
     }
-    const retrieved = searchTaxSources(parsed.data.question, parsed.data.history);
+    const retrieved = searchTaxSources(parsed.data.question, parsed.data.history, await consultationSources());
     if (!retrieved.length) {
       res.json(ConsultTaxResponse.parse({ answer: insufficientSourcesAnswer, sources: [], disclaimer: taxDisclaimer, checkedAt: taxCheckedAt }));
       return;
@@ -69,7 +70,12 @@ SUMBER:\n${context}` },
       ],
     }, { timeout: 90_000 });
     const output: unknown = JSON.parse(result.choices[0]?.message?.content ?? "{}");
-    res.json(ConsultTaxResponse.parse({ ...groundedResponse(output, retrieved), disclaimer: taxDisclaimer, checkedAt: taxCheckedAt }));
+    // A monitor or reviewer can hold a source while the AI request is in flight.
+    const stillAllowed = new Set((await consultationSources()).map(r => r.id));
+    const grounded = groundedResponse(output, retrieved);
+    const response = grounded.sources.some(r => !stillAllowed.has(r.id))
+      ? { answer: insufficientSourcesAnswer, sources: [] } : grounded;
+    res.json(ConsultTaxResponse.parse({ ...response, disclaimer: taxDisclaimer, checkedAt: taxCheckedAt }));
   } catch {
     // Do not log prompts, answers or provider errors that may include sensitive text.
     req.log.warn("Tax consultation provider unavailable");

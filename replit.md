@@ -34,7 +34,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 - Pembayaran dilakukan di kanal resmi; aplikasi hanya memberi panduan dan menyimpan catatan, bukan menerima dana, membuat billing, atau mengonfirmasi penerimaan DJP.
 - Data profil usaha, kewajiban dan pembayaran disimpan di browser pengguna. Tidak tersinkron antardevice; ekspor cadangan diperlukan sebelum menghapus data browser.
 - Pertanyaan konsultasi dikirim ke penyedia AI melalui server, bukan disimpan dalam database aplikasi. Jangan memasukkan identitas atau kredensial pajak.
-- Pustaka merupakan kurasi dengan tanggal pemeriksaan, bukan pembaruan regulasi otomatis. Judul manual/metadata regulasi tidak mewakili pembacaan naskah lengkap.
+- Pustaka merupakan kurasi dengan tanggal pemeriksaan, bukan pembaruan regulasi otomatis. Monitor hanya menandai perubahan dan menahan sumber konsultasi sampai tinjauan manusia; lihat `artifacts/api-server/TAX-SOURCE-MONITOR.md`. Judul manual/metadata regulasi tidak mewakili pembacaan naskah lengkap.
 
 ## User preferences
 
