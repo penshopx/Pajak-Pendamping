@@ -1,0 +1,1 @@
+- [Batas layanan pajak](tax-service-boundaries.md) — UMKM, AI bersumber, dan pencatatan pembayaran; sumber lama dan metadata bukan kepastian hukum.

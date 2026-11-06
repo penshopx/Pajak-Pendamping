@@ -11,6 +11,44 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /tax/resources:
+    get:
+      operationId: listTaxResources
+      tags: [tax]
+      summary: Pustaka sumber dan panduan DJP
+      responses:
+        "200":
+          description: Curated official resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TaxResource"
+  /tax/consult:
+    post:
+      operationId: consultTax
+      tags: [tax]
+      summary: Konsultasi edukasi pajak berbasis sumber
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsultationInput"
+      responses:
+        "200":
+          description: Answer with cited sources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultationAnswer"
+        "400":
+          description: Invalid question
+        "429":
+          description: Too many requests
+        "503":
+          description: AI temporarily unavailable
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +64,46 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    TaxResource:
+      type: object
+      required: [id, title, category, description, url, publisher, sourceType, checkedAt, excerpt]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        category: { type: string }
+        description: { type: string }
+        url: { type: string }
+        publisher: { type: string }
+        sourceType: { type: string }
+        checkedAt: { type: string }
+        excerpt: { type: string }
+    ConsultationInput:
+      type: object
+      required: [question]
+      properties:
+        question: { type: string, minLength: 5, maxLength: 2000 }
+        history:
+          type: array
+          maxItems: 8
+          items:
+            $ref: "#/components/schemas/ConsultationMessage"
+    ConsultationMessage:
+      type: object
+      required: [role, content]
+      properties:
+        role: { type: string, enum: [user, assistant] }
+        content: { type: string, maxLength: 6000 }
+    ConsultationAnswer:
+      type: object
+      required: [answer, sources, disclaimer, checkedAt]
+      properties:
+        answer: { type: string }
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaxResource"
+        disclaimer: { type: string }
+        checkedAt: { type: string }
     HealthStatus:
       type: object
       properties:

@@ -1,6 +1,6 @@
-# [Project name]
+# Sahabat Pajak
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Pendamping edukasi perpajakan UMKM Indonesia dengan konsultasi AI bersumber, pustaka Coretax, dan pencatatan kewajiban serta pembayaran.
 
 ## Run & Operate
 
@@ -30,7 +30,11 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Sasaran versi awal: UMKM dan pemilik usaha. Konsultasi AI, bukan pemesanan konsultan.
+- Pembayaran dilakukan di kanal resmi; aplikasi hanya memberi panduan dan menyimpan catatan, bukan menerima dana, membuat billing, atau mengonfirmasi penerimaan DJP.
+- Data profil usaha, kewajiban dan pembayaran disimpan di browser pengguna. Tidak tersinkron antardevice; ekspor cadangan diperlukan sebelum menghapus data browser.
+- Pertanyaan konsultasi dikirim ke penyedia AI melalui server, bukan disimpan dalam database aplikasi. Jangan memasukkan identitas atau kredensial pajak.
+- Pustaka merupakan kurasi dengan tanggal pemeriksaan, bukan pembaruan regulasi otomatis. Judul manual/metadata regulasi tidak mewakili pembacaan naskah lengkap.
 
 ## User preferences
 

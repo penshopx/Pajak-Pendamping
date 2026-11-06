@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Sahabat Pajak"
+description = "Pendamping pajak UMKM Indonesia: konsultasi AI bersumber DJP, panduan Coretax, dan pencatatan kewajiban serta pembayaran di perangkat pengguna."
+version = "1.0.0"
+id = "artifacts/sahabat-pajak"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20946
+
+[services.development]
+run = "pnpm --filter @workspace/sahabat-pajak run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sahabat-pajak", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/sahabat-pajak/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20946"
+BASE_PATH = "/"
