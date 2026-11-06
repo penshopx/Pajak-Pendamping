@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
-import { ArrowUpRight, BookOpenCheck, Library, Search, TriangleAlert } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearch } from 'wouter';
+import { ArrowUpRight, BookOpenCheck, BookText, GraduationCap, Library, Search, TriangleAlert } from 'lucide-react';
 import { useListTaxResources } from '@workspace/api-client-react';
 import { formatDate, usePageTitle } from '@/lib/format';
 import { EmptyState, Notice, PageHeader } from '@/components/shell';
@@ -17,6 +18,18 @@ export default function Pustaka() {
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('Semua');
   const [guide, setGuide] = useState<'spt' | 'akses'>('spt');
+  const search = useSearch();
+  // Deep links: apply valid query values whenever the URL search changes; ignore invalid ones.
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const g = params.get('guide');
+    setGuide(g === 'akses' ? 'akses' : 'spt');
+    const c = params.get('category');
+    setCat(c && CATS.includes(c) ? c : 'Semua');
+    const query = params.get('q');
+    const text = query?.trim() ?? '';
+    setQ(text.length <= 100 ? text : '');
+  }, [search]);
 
   const cats = useMemo(() => {
     const extra = (data ?? []).map((r) => r.category).filter((c) => !CATS.includes(c));
@@ -34,6 +47,17 @@ export default function Pustaka() {
     <>
       <PageHeader eyebrow="Pustaka" title="Sumber resmi, dikurasi"
         desc="Tautan menuju halaman asli DJP dan sumber terkait. Tidak semuanya berkekuatan hukum: artikel mencerminkan pendapat penulisnya. Baca sumber aslinya untuk ketentuan yang berlaku." />
+      <Link href="/belajar" data-testid="link-library-learning"
+        className="press group mb-4 flex items-center gap-3 rounded-xl border border-primary/45 bg-primary/10 px-4 py-3 hover:bg-primary/15">
+        <GraduationCap className="h-5 w-5 shrink-0 text-primary" />
+        <span className="min-w-0 flex-1 text-sm leading-relaxed"><b className="text-white">Bingung mulai dari mana?</b> <span className="text-foreground/85">Ikuti Peta belajar pajak UMKM: enam tahap yang menghubungkan pustaka ini dengan panduan akses, pembayaran, SPT, dan catatan usaha.</span></span>
+        <span className="hidden text-sm font-semibold text-primary sm:inline">Buka peta</span>
+      </Link>
+      <Link href="/glosarium" data-testid="link-library-glossary"
+        className="press mb-4 flex items-center gap-3 rounded-xl border border-input bg-card px-4 py-3 text-sm hover:border-primary">
+        <BookText className="h-5 w-5 shrink-0 text-accent" />
+        <span><b className="text-white">Butuh arti istilah dulu?</b> <span className="text-foreground/85">Glosarium menjelaskan PKP, NTPN, BPE, omzet, dan lainnya beserta sumbernya.</span></span>
+      </Link>
       <Notice icon={BookOpenCheck}>Informasi konsultan pajak dan PJAP adalah rujukan edukasi. Sahabat Pajak tidak mengklaim izin praktik konsultan, penunjukan sebagai PJAP, atau verifikasi izin pihak tertentu. Periksa status dan saluran layanan melalui sumber resmi.</Notice>
 
       {!isLoading && !isError && data?.length ? <div className="mt-5 space-y-3">

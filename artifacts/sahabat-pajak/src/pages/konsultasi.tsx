@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, ArrowUpRight, Eraser, LockKeyhole, RefreshCw, Sparkles, TriangleAlert } from 'lucide-react';
+import { useSearch } from 'wouter';
 import { useConsultTax } from '@workspace/api-client-react';
 import { uid, useStore, type ChatMessage } from '@/lib/store';
 import { formatDate, usePageTitle } from '@/lib/format';
@@ -62,6 +63,17 @@ export default function Konsultasi() {
   const [lastQ, setLastQ] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const search = useSearch();
+  const [prefilled, setPrefilled] = useState(false);
+  const draftFromLink = new URLSearchParams(search).get('pertanyaan');
+  // Prefill only (never send) when a new ?pertanyaan= value is navigated to; user edits are kept otherwise.
+  useEffect(() => {
+    setPrefilled(false);
+    if (!draftFromLink || !draftFromLink.trim()) return;
+    setQ(draftFromLink.slice(0, MAX));
+    setPrefilled(true);
+    taRef.current?.focus();
+  }, [draftFromLink]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [chat.length, consult.isPending, error]);
 
@@ -70,6 +82,7 @@ export default function Konsultasi() {
 
   const send = async (question: string, appendUser = true) => {
     if (consult.isPending) return;
+    setPrefilled(false);
     setError(null);
     const history = chat.slice(-8).map((m) => ({ role: m.role, content: m.content.slice(0, 6000) }));
     if (appendUser) addChat({ id: uid(), role: 'user', content: question, createdAt: new Date().toISOString() });
@@ -107,7 +120,7 @@ export default function Konsultasi() {
             <div className="flex items-center gap-2 text-sm font-semibold text-accent"><Sparkles className="h-4 w-4" />Mulai dari pertanyaan berikut</div>
             <div className="mt-4 flex flex-col gap-2">
               {SUGGESTED.map((s, i) => (
-                <button key={s} onClick={() => { setQ(s); taRef.current?.focus(); }} data-testid={`button-suggest-${i}`}
+                <button key={s} onClick={() => { setQ(s); setPrefilled(false); taRef.current?.focus(); }} data-testid={`button-suggest-${i}`}
                   className="lift press group flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-4 py-3 text-left text-[15px] text-foreground">
                   {s}<ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary" />
                 </button>
@@ -175,6 +188,10 @@ export default function Konsultasi() {
         )}
         <div ref={endRef} />
       </div>
+
+      {prefilled && <p className="mt-6 rounded-xl border border-primary/40 bg-primary/[.07] px-4 py-3 text-sm leading-relaxed text-foreground/90" role="note" data-testid="text-prefill-notice">
+        Draf pertanyaan sudah diisikan di kolom bawah dan <b className="text-white">belum dikirim</b>. Tinjau dan ubah bila perlu, pastikan tidak ada data rahasia, lalu tekan Kirim.
+      </p>}
 
       <form className="sticky bottom-20 md:bottom-4 mt-6 rounded-2xl border border-input bg-popover/95 p-2 backdrop-blur focus-within:border-primary transition-colors"
         onSubmit={(e) => { e.preventDefault(); submit(); }}>

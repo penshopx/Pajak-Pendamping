@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { LayoutGrid, MessagesSquare, CalendarClock, Receipt, Library, Settings2, HardDrive, Wallet, FileSpreadsheet, Menu, AlertTriangle, ArrowLeftRight } from 'lucide-react';
+import { LayoutGrid, MessagesSquare, CalendarClock, Receipt, Library, Settings2, HardDrive, Wallet, FileSpreadsheet, Menu, AlertTriangle, ArrowLeftRight, GraduationCap, BookText } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 const tid = (l: string) => l.toLowerCase().replace(/&/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
@@ -13,6 +13,8 @@ const NAV = [
   { href: '/laba-rugi', label: 'Laba Rugi', icon: FileSpreadsheet },
   { href: '/pembayaran', label: 'Pembayaran', icon: Receipt },
   { href: '/konsultasi', label: 'Konsultasi', icon: MessagesSquare },
+  { href: '/belajar', label: 'Belajar', icon: GraduationCap },
+  { href: '/glosarium', label: 'Glosarium', icon: BookText },
   { href: '/pustaka', label: 'Pustaka', icon: Library },
   { href: '/pengaturan', label: 'Pengaturan', icon: Settings2 },
 ];

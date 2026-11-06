@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { MAX_TRANSACTIONS, validateTransaction, type BusinessTransaction } from './business-ledger';
+import { updateLearningCompleted, validateLearningCompleted } from './learning-path';
 import {
   assertTradeLedger, deleteBillInLedger, linkTransactionInLedger, recordPaymentInLedger,
   saveBillInLedger, unlinkTransactionInLedger, type TradeBill, type TradeLedger, type TradePaymentInput,
@@ -24,10 +25,10 @@ export interface ChatMessage {
   sources?: ChatSource[]; disclaimer?: string; checkedAt?: string;
 }
 
-interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[] }
+interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[]; learningCompleted: string[] }
 
 const KEY = 'sahabat-pajak:v1';
-const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [] };
+const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [], learningCompleted: [] };
 const READ_ERROR = 'Data lokal tidak dapat dibaca dengan aman. Data asli tidak dihapus. Jangan hapus data peramban; pulihkan cadangan atau hubungi pengelola sebelum melanjutkan.';
 
 export const TAX_TYPES = [
@@ -46,6 +47,7 @@ function readState(): State {
     if (p.transactions && (p.transactions.length > MAX_TRANSACTIONS || !p.transactions.every(validateTransaction)
       || new Set(p.transactions.map(t => t.id)).size !== p.transactions.length)) throw new Error(READ_ERROR);
     assertTradeLedger(p.tradeBills ?? [], p.transactions ?? []);
+    if (p.learningCompleted !== undefined && !validateLearningCompleted(p.learningCompleted)) throw new Error(READ_ERROR);
     return {
       ...p,
       profile: { ...EMPTY.profile, ...(p.profile ?? {}) },
@@ -54,6 +56,7 @@ function readState(): State {
       chat: Array.isArray(p.chat) ? p.chat : [],
       transactions: p.transactions ?? [],
       tradeBills: p.tradeBills ?? [],
+      learningCompleted: p.learningCompleted ?? [],
     };
   } catch { throw new Error(READ_ERROR); }
 }
@@ -85,6 +88,8 @@ interface Ctx extends State {
   recordTradePayment: (input: TradePaymentInput) => void;
   linkTradeTransaction: (billId: string, transactionId: string) => void;
   unlinkTradeTransaction: (transactionId: string) => void;
+  setLearningComplete: (id: string, done: boolean) => void;
+  resetLearningProgress: () => void;
 }
 
 const StoreCtx = createContext<Ctx | null>(null);
@@ -168,6 +173,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const linkTradeTransaction = useCallback((billId: string, transactionId: string) =>
     updateTrade(s => linkTransactionInLedger(s, billId, transactionId)), [updateTrade]);
   const unlinkTradeTransaction = useCallback((id: string) => updateTrade(s => unlinkTransactionInLedger(s, id)), [updateTrade]);
+  const setLearningComplete = useCallback((id: string, done: boolean) => setState(s => ({
+    ...s, learningCompleted: updateLearningCompleted(s.learningCompleted, id, done),
+  })), [setState]);
+  const resetLearningProgress = useCallback(() => setState(s => ({ ...s, learningCompleted: [] })), [setState]);
   const removeDemo = useCallback(() => setState((s) => ({
     ...s, obligations: s.obligations.filter((x) => !x.demo), payments: s.payments.filter((x) => !x.demo),
   })), []);
@@ -192,8 +201,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ...state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
     addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
     saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction,
+    setLearningComplete, resetLearningProgress,
   }), [state, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
-    saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction]);
+    saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction, setLearningComplete, resetLearningProgress]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }

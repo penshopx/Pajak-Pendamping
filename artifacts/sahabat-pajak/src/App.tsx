@@ -9,6 +9,8 @@ import Konsultasi from '@/pages/konsultasi';
 import Kewajiban from '@/pages/kewajiban';
 import Pembayaran from '@/pages/pembayaran';
 import Pustaka from '@/pages/pustaka';
+import Belajar from '@/pages/belajar';
+import Glosarium from '@/pages/glosarium';
 import Pengaturan from '@/pages/pengaturan';
 import Transaksi from '@/pages/transaksi';
 import LabaRugi from '@/pages/laba-rugi';
@@ -31,6 +33,8 @@ function Router() {
           <Route path="/transaksi" component={Transaksi} />
           <Route path="/laba-rugi" component={LabaRugi} />
           <Route path="/piutang-utang" component={PiutangUtang} />
+          <Route path="/belajar" component={Belajar} />
+          <Route path="/glosarium" component={Glosarium} />
           <Route path="/pustaka" component={Pustaka} />
           <Route path="/pengaturan" component={Pengaturan} />
           <Route component={NotFound} />

@@ -15,6 +15,12 @@ Pengguna memilih tautan penawaran template pajak komersial sebagai “Referensi 
 
 **How to apply:** Gunakan untuk mengusulkan fungsi yang relevan bagi Sahabat Pajak. Verifikasi aturan dan rumus dari sumber resmi sebelum menerapkan perhitungan.
 
+Peta belajar UMKM menghubungkan materi pengantar dengan panduan dan pustaka yang sudah ada; progresnya adalah penanda belajar mandiri, bukan status kepatuhan.
+
+**Why:** Pengguna memilih peta belajar setelah meninjau referensi seminar, spreadsheet fiskal, dan AI komersial. Pilihan itu bukan permintaan mengubah rekap kas menjadi mesin pajak atau mengesahkan pemahaman pengguna.
+
+**How to apply:** Jangan menganggap membuka sumber atau memperoleh jawaban AI berarti pelajaran selesai. Pisahkan progres belajar dari persiapan SPT per tahun, pembayaran, dan pelaporan nyata. Pertanyaan dari materi hanya boleh menjadi draf yang ditinjau serta dikirim sendiri oleh pengguna.
+
 Referensi konsultan pajak dan PJAP digunakan untuk pustaka dan konsultasi AI, bukan untuk video atau klaim status profesi aplikasi.
 
 **Why:** Pengguna secara eksplisit memilih “Tambahkan ke pustaka dan AI” untuk referensi tambahan tersebut.
