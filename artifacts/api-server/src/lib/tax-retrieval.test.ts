@@ -74,6 +74,12 @@ test("manual NPPN and roles are independently retrievable", () => {
   assert.ok(ids("Bagaimana membayar?").includes("pmk81-proof"));
 });
 
+test("mixed final/NPPN question keeps the manual without bypassing the source allowlist", () => {
+  const question = "OP toko 2026 omzet Rp300 juta, bagian Rp500 juta PPh final, langkah NPPN serta tenggat dan denda.";
+  assert.ok(ids(question).includes("nppn"));
+  assert.ok(!searchTaxSources(question, [], taxResources.filter(r => r.id !== "nppn")).some(r => r.id === "nppn"));
+});
+
 test("amendments are fetched as a bundle rather than isolated old PMK", () => {
   for (const id of ["pmk11-changes", "pmk53-changes", "pmk54-changes", "pmk1-changes"])
     assert.ok(ids("Apa perubahan PMK 81?").includes(id));
