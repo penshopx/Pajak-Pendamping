@@ -26,3 +26,15 @@ Pisahkan fakta internal aplikasi dari cuplikan sumber eksternal dalam konteks AI
 **Why:** Jika penjelasan status Sahabat Pajak dicampurkan ke ringkasan halaman DJP, AI dapat keliru mengatakan bahwa DJP sendiri membahas atau menegaskan status aplikasi.
 
 **How to apply:** Letakkan batas layanan aplikasi dalam instruksi tersendiri tanpa sitasi DJP; gunakan sitasi hanya untuk pernyataan yang benar-benar didukung halaman sumber.
+
+Untuk panduan akses Coretax, utamakan halaman khusus kondisi akun yang lebih baru daripada ringkasan umum yang lebih lama; jangan gabungkan semua pengguna ke satu alur aktivasi.
+
+**Why:** Coretaxpedia halaman umum akses pertama kali menyebut login memakai kredensial DJP Online, sementara halaman khusus pengguna DJP Online yang diperbarui 14 April 2026 mengarahkan pembuatan kata sandi baru melalui “Lupa Kata Sandi?”. Perbedaan versi dan cakupan dapat menghasilkan langkah yang salah jika diratakan.
+
+**How to apply:** Bedakan pengguna DJP Online yang sudah memadankan NIK, pemilik NPWP tanpa DJP Online, dan yang belum memiliki NPWP. Verifikasi ulang tanggal dan isi sumber sebelum mengubah panduan.
+
+Jangan menganggap unduhan bertautan `.pdf` dan respons HTTP sukses sebagai bukti dokumen berhasil dibaca.
+
+**Why:** Sumber leaflet aktivasi DJP pernah mengembalikan unduhan terpotong lalu HTML “Under Maintenance” pada URL PDF, sedangkan leaflet KODJP berhasil diakses. Tanpa pemeriksaan, status analisis sumber dapat keliru.
+
+**How to apply:** Pastikan isi berkas benar-benar PDF yang terbaca. Bila tidak, gunakan sumber resmi alternatif dengan identitasnya sendiri dan nyatakan bahwa dokumen awal belum dianalisis.

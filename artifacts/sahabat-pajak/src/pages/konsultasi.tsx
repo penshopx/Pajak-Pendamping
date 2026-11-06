@@ -16,6 +16,8 @@ const SUGGESTED = [
   'Apa yang perlu disiapkan untuk mendaftar NPWP badan usaha?',
   'Apa perbedaan konsultan pajak berizin dan PJAP?',
   'Apa kewajiban dan larangan PJAP menurut halaman DJP?',
+  'Saya punya NPWP tetapi belum pernah memakai DJP Online. Bagaimana aktivasi Coretax?',
+  'Bagaimana cara memohon dan memeriksa status Kode Otorisasi DJP?',
 ];
 
 const MIN = 5, MAX = 2000;
