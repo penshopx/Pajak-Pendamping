@@ -1,5 +1,11 @@
 # Evaluasi penafsiran pajak
 
+Konsultasi produksi kini juga memakai penyaring makna wajib sebelum tampil.
+Lihat `../TAX-ANSWER-GATE.md` untuk anggaran, kegagalan tertutup, hasil
+kalibrasi (termasuk false positive yang belum terselesaikan), dan tinjauan
+manusia. Evaluator di direktori ini tetap alat evaluasi terpisah, bukan
+persetujuan baseline atau kepastian hukum.
+
 Semua pertanyaan adalah rekaan tanpa nama, NPWP, NIK atau data wajib pajak nyata.
 Kumpulan ini mencakup OP versus badan, penggabungan omzet suami-istri, peralihan
 OP dan badan pada PP 20/2026, pekerjaan bebas, NPPN tanpa dasar tenggat,

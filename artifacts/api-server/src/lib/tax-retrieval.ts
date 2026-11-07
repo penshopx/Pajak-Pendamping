@@ -76,7 +76,7 @@ Batas: ${r.limitations ?? "Bukan dasar penetapan tarif, tenggat atau kewajiban."
 Cuplikan: ${r.excerpt}`).join("\n\n");
 }
 
-/** Fail closed for fabricated/unretrieved citations, missing citations and external links. */
+/** Structural gate only, NOT semantic approval. Production must also call gateTaxAnswer. */
 export function groundedResponse(output: unknown, retrieved: TaxResource[]): { answer: string; sources: TaxResource[] } {
   const fallback = { answer: insufficientSourcesAnswer, sources: [] };
   if (!output || typeof output !== "object" || !("answer" in output) || typeof output.answer !== "string"

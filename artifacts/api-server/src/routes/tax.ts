@@ -4,8 +4,10 @@ import { openai } from "@workspace/integrations-openai-ai-server";
 import { taxResources, taxDisclaimer } from "../lib/tax-resources";
 import { taxCheckedAt } from "../lib/tax-excerpts";
 import { consultationSources } from "../lib/tax-source-monitor";
-import { appStatusAnswer, groundedResponse, insufficientSourcesAnswer, searchTaxSources } from "../lib/tax-retrieval";
+import { appStatusAnswer, insufficientSourcesAnswer, searchTaxSources } from "../lib/tax-retrieval";
 import { taxConsultationSystemPrompt } from "../lib/tax-consultation-prompt";
+import { gateTaxAnswer } from "../lib/tax-answer-gate";
+import { judgeTaxAnswer } from "../lib/tax-answer-judge";
 
 const router: IRouter = Router();
 // Fixed windows and bounded map avoid retaining chat text or unbounded IP keys.
@@ -55,13 +57,16 @@ router.post("/tax/consult", async (req, res): Promise<void> => {
         ...(parsed.data.history ?? []).map(message => ({ role: message.role as "user" | "assistant", content: message.content })),
         { role: "user", content: parsed.data.question.trim() },
       ],
-    }, { timeout: 90_000 });
+    }, { timeout: 60_000, maxRetries: 0 });
+    if (result.choices[0]?.finish_reason !== "stop") throw new Error("Incomplete consultation");
     const output: unknown = JSON.parse(result.choices[0]?.message?.content ?? "{}");
-    // A monitor or reviewer can hold a source while the AI request is in flight.
-    const stillAllowed = new Set((await consultationSources()).map(r => r.id));
-    const grounded = groundedResponse(output, retrieved);
-    const response = grounded.sources.some(r => !stillAllowed.has(r.id))
-      ? { answer: insufficientSourcesAnswer, sources: [] } : grounded;
+    const started = Date.now();
+    const response = await gateTaxAnswer({
+      output, retrieved, question: parsed.data.question, history: parsed.data.history,
+      judge: judgeTaxAnswer, currentSources: consultationSources,
+    });
+    // Codes and timing only: never persist taxpayer text, verdicts, or provider errors.
+    req.log.info({ gate: response.reason, durationMs: Date.now() - started }, "Tax answer gate");
     res.json(ConsultTaxResponse.parse({ ...response, disclaimer: taxDisclaimer, checkedAt: taxCheckedAt }));
   } catch {
     // Do not log prompts, answers or provider errors that may include sensitive text.

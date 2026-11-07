@@ -24,3 +24,16 @@ disetujui untuk melayani pengguna; menyamakan keduanya melewati tinjauan manusia
 
 **How to apply:** Pertahankan pembatasan sumber konsultasi. Jangan menyetujui
 baseline atau memakai data wajib pajak nyata demi menjalankan evaluasi.
+
+Penilai dukungan dalam layanan harus gagal tertutup, meskipun akibatnya
+jawaban benar ikut ditahan. Jangan menghapus pemeriksaan atau membuat
+pengecualian jawaban demi meluluskan kalibrasi.
+
+**Why:** Percobaan rekaan menunjukkan penilai dapat mencampurkan asumsi
+pertanyaan dengan jawaban, menghilangkan unit, serta mengarang kutipan yang
+mirip. Kelulusan jawaban benar juga bervariasi antarpercobaan; penolakan
+semua contoh salah saja tidak cukup untuk menyatakan kalibrasi berhasil.
+
+**How to apply:** Pisahkan teks yang dinilai dari konteks pertanyaan. Uji
+kontrol positif dan negatif, laporkan false positive secara terbuka, dan
+jangan menyebut hasil model sebagai tinjauan hukum manusia.
