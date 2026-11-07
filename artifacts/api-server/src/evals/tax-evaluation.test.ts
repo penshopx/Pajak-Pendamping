@@ -78,7 +78,7 @@ test("judge receives claim-level and case-specific criteria, source text and unt
 });
 
 test("a correct proposition attributed to the wrong retrieved source is rejected", () => {
-  const op = taxEvalCases[0];
+  const op = taxEvalCases.find(c => c.id === "op-badan")!;
   const retrieved = searchTaxSources(op.question);
   const wrongAttribution = op.good.replaceAll("[pp55-base]", "[pp20-final]");
   assert.notEqual(groundedResponse(answerOutput(wrongAttribution), retrieved).answer, insufficientSourcesAnswer);
@@ -89,7 +89,8 @@ test("paid evaluation is explicit, budgeted before any request, and limited to s
   assert.equal(evaluationOptions([]).live, false);
   assert.equal(evaluationOptions(["--live"]).maxCalls, 2);
   assert.equal(evaluationOptions(["--calibrate"]).live, false);
-  assert.equal(evaluationOptions(["--live", "--all", "--max-calls", "16"]).cases.length, 8);
+  assert.equal(evaluationOptions(["--all"]).cases.length, taxEvalCases.length);
+  assert.equal(evaluationOptions(["--live", "--case", "sp2dk-general", "--case", "sp2dk-missing-facts", "--case", "sp2dk-not-closed", "--max-calls", "6"]).cases.length, 3);
   for (const args of [
     ["--live", "--all"], ["--live", "--case", "unknown"],
     ["--max-calls", "17"], ["--max-calls", "NaN"], ["--max-calls", "0"],

@@ -26,6 +26,17 @@ export function searchTaxSources(question: string, history: { role: string; cont
     .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score || a.resource.id.localeCompare(b.resource.id));
   const selected = new Map<string, TaxResource>();
+  // Explicit SP2DK context must survive generic UMKM/document/BPE matches.
+  // Use only the supplied monitor allowlist, including for follow-up questions.
+  if (/\bsp2dk\b|permintaan penjelasan|pengawasan/i.test(`${question} ${previous}`)) {
+    for (const { resource } of ranked.filter(r => r.resource.id.startsWith("sp2dk-"))) {
+      selected.set(resource.id, resource);
+      for (const id of resource.relatedIds ?? []) {
+        const companion = resources.find(r => r.id === id && r.verification === "excerpt");
+        if (companion) selected.set(id, companion);
+      }
+    }
+  }
   // An explicit secondary NPPN question must not be crowded out by the final-tax bundle.
   // Still select only from the eligible, scored input (including the monitor's allowlist).
   if (/\bnppn\b/i.test(`${question} ${previous}`)) {

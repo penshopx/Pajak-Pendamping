@@ -41,6 +41,12 @@ cuplikan yang bergantung padanya (termasuk siklus rujukan perubahan/peralihan).
 Jika revisi cuplikan diperlukan, ubah kurasi lewat perubahan kode yang ditinjau,
 pertahankan konteks historis dan ID stabil, lalu periksa dan setujui digest baru.
 Tidak ada unduhan yang langsung mengubah `tax-excerpts.ts`/`tax-resources.ts`.
+Cuplikan SP2DK `sp2dk-registered`, `sp2dk-unregistered`, `sp2dk-extension` dan
+`sp2dk-followup` memakai naskah PMK 111/2025 pada halaman resmi DJP, dibaca
+7 November 2026. Keempatnya satu paket wajib: jika satu ditahan, semuanya
+ditahan. Penambahan kurasi ini tidak menyetujui baseline. Peninjau tetap harus
+mencocokkan naskah, pasal, cakupan waktu, serta masing-masing digest sebelum
+memutuskan. Jangan menyetujui otomatis agar konsultasi tersedia.
 Observasi dan keputusan **ditambahkan**, tidak ditimpa; setiap keputusan menyimpan
 snapshot cuplikan saat itu. Versi lama tetap ada di riwayat review dan Git.
 

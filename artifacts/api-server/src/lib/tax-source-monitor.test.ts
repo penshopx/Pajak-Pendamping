@@ -80,6 +80,25 @@ test("dependency withholding cascades through legal bundles but preserves unrela
   assert.deepEqual(eligibleSources(taxResources, new Set()), []);
 });
 
+test("SP2DK baseline, failed access and held companions cannot leak into consultation", () => {
+  const bundle = taxResources.filter(r => r.id.startsWith("sp2dk-"));
+  assert.equal(bundle.length, 4);
+  for (const r of bundle) {
+    const obs = { ...observation, sourceUrl: sourceUrl(r.url), effectiveUrl: sourceUrl(r.url) };
+    assert.notEqual(reviewStatus(r, undefined, undefined, undefined, now), "approved");
+    assert.notEqual(reviewStatus(r, obs, undefined, undefined, now), "approved");
+    const rev = { ...review, resourceId: r.id, resourceDigest: resourceDigest(r), resourceSnapshot: r };
+    assert.equal(reviewStatus(r, obs, rev, obs, now), "approved"); // Synthetic review only.
+    assert.notEqual(reviewStatus(r, { ...obs, outcome: "error" }, rev, obs, now), "approved");
+    const approved = new Set(taxResources.map(s => s.id));
+    approved.delete(r.id);
+    const allowed = eligibleSources(taxResources, approved);
+    assert.ok(!searchTaxSources("Apa SP2DK?", [], allowed).some(s => s.id.startsWith("sp2dk-")));
+  }
+  assert.deepEqual(searchTaxSources("Apa itu SP2DK?", [], []), []);
+  assert.deepEqual(eligibleSources(bundle, new Set()), []);
+});
+
 const mockFetch = (run: (url: string) => Response | Promise<Response>) =>
   ((input: string | URL | Request) => run(String(input))) as typeof fetch;
 

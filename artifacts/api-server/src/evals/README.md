@@ -3,7 +3,9 @@
 Semua pertanyaan adalah rekaan tanpa nama, NPWP, NIK atau data wajib pajak nyata.
 Kumpulan ini mencakup OP versus badan, penggabungan omzet suami-istri, peralihan
 OP dan badan pada PP 20/2026, pekerjaan bebas, NPPN tanpa dasar tenggat,
-sumber palsu (termasuk riwayat asisten), dan pertanyaan campuran.
+sumber palsu (termasuk riwayat asisten), pertanyaan campuran, serta SP2DK:
+pemicu waktu menurut status WP/saluran, kasus dengan fakta belum cukup,
+syarat penerimaan pemberitahuan perpanjangan, dan draf/BPE bukan penutupan.
 
 ## Tes rutin: tanpa jaringan dan tanpa biaya AI
 
@@ -31,8 +33,12 @@ pnpm --filter @workspace/api-server run tax:eval --live
 # Satu kasus tertentu.
 pnpm --filter @workspace/api-server run tax:eval --live --case transition-op
 
-# Seluruh 8 kasus: perlu menyetujui batas 16 permintaan.
-pnpm --filter @workspace/api-server run tax:eval --live --all --max-calls 16
+# Tiga kasus SP2DK, maksimum 6 permintaan.
+pnpm --filter @workspace/api-server run tax:eval --live \
+  --case sp2dk-general --case sp2dk-missing-facts --case sp2dk-not-closed --max-calls 6
+
+# Daftar seluruh kasus tanpa menghubungi AI.
+pnpm --filter @workspace/api-server run tax:eval --all
 
 # Kalibrasi penilai dengan contoh benar dan salah, bukan generasi jawaban.
 pnpm --filter @workspace/api-server run tax:eval --live --calibrate --case nppn-no-deadline
@@ -54,6 +60,10 @@ kredit AI Replit. Batas maksimum keras 16 permintaan per proses, satu kasus
 default, serial, tanpa retry SDK maupun batch, maksimum 60.000 karakter input
 dan 8.192 token keluaran per permintaan, timeout 90 detik. Batas ini membatasi
 pemakaian, **bukan jaminan harga rupiah**. Jumlah token aktual dicatat.
+Jumlah kasus kini melebihi kapasitas `--live --all` dalam batas keras tersebut;
+pilih kelompok menggunakan `--case` berulang, maksimum delapan kasus per proses.
+Penambahan SP2DK diverifikasi dengan tes offline; bukan klaim bahwa generasi
+AI atau penilai semantik untuk tiga kasus baru sudah dikalibrasi langsung.
 Tidak ada panggilan AI di tes rutin, jalur HTTP, atau startup yang ditambahkan
 oleh evaluasi ini. Argumen teks pertanyaan bebas/file pengguna tidak didukung.
 

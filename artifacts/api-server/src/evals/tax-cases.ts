@@ -1,3 +1,4 @@
+import { sp2dkEvalCases } from "./tax-sp2dk-cases";
 /** Synthetic cases only. Expected claims refer to the curated excerpts, not independent legal advice. */
 export interface TaxEvalCase {
   id: string;
@@ -12,6 +13,7 @@ export interface TaxEvalCase {
 
 const limits = "Batas: cuplikan ini bukan konsolidasi lengkap; konfirmasikan penerapan kasus kepada DJP/KPP.";
 export const taxEvalCases: TaxEvalCase[] = [
+  ...sp2dkEvalCases,
   {
     id: "op-badan",
     question: "Kasus rekaan tahun 2026: OP toko dan perseroan perorangan masing-masing omzet Rp400 juta. Apakah bagian Rp500 juta bebas PPh final berlaku untuk keduanya? Anggap syarat final lain terpenuhi.",

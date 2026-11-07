@@ -1,4 +1,5 @@
 import type { TaxResource } from "@workspace/api-zod";
+import { sp2dkExcerpts } from "./tax-sp2dk-excerpts";
 
 // Curated from the linked full texts, NOT a consolidated or exhaustive legal corpus.
 // This date describes editorial review, never an automated fetch. The monitor
@@ -27,6 +28,7 @@ function manual(id: string, title: string, file: string, page: number, locator: 
 }
 
 export const reviewedTaxExcerpts: TaxResource[] = [
+  ...sp2dkExcerpts,
   law("pp20-final", "PPh final UMKM — tarif dan pengecualian penghasilan", pp20 + "#page=3",
     "PP 20/2026 Pasal I angka 3 → PP 55/2022 Pasal 56 ayat (1)–(4); PDF hlm. 3–4",
     "PP 55/2022 sebagaimana diubah PP 20/2026 (berlaku 22 April 2026)",

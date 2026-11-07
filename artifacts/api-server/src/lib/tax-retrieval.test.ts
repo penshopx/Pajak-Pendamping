@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { taxResources } from "./tax-resources";
 import { appStatusAnswer, groundedResponse, insufficientSourcesAnswer, searchTaxSources, sourceContext } from "./tax-retrieval";
 import { ConsultTaxResponse, ListTaxResourcesResponse } from "@workspace/api-zod";
+import { taxConsultationSystemPrompt } from "./tax-consultation-prompt";
 
 const ids = (q: string) => searchTaxSources(q).map(r => r.id);
 
@@ -54,6 +55,33 @@ test("SPT paths retrieve read OP and badan guidance with deadline caveats", () =
     assert.match(r.url, /#page=\d+$/);
     assert.match(r.limitations ?? "", /bukan dasar kelayakan/);
   }
+});
+
+test("SP2DK retrieves operative text as a complete bundle even among general UMKM and BPE matches", () => {
+  for (const question of [
+    "Apa itu SP2DK?",
+    "SP2DK UMKM dokumen SPT BPE omzet dan pembayaran?",
+    "Surat permintaan penjelasan atas data dan keterangan",
+    "WP belum terdaftar akun belum aktif SP2DK baru dibaca hari ini, tenggatnya?",
+  ]) {
+    const found = searchTaxSources(question);
+    for (const id of ["sp2dk-registered", "sp2dk-unregistered", "sp2dk-extension", "sp2dk-followup"]) {
+      const source = found.find(r => r.id === id);
+      assert.ok(source, `${question}: ${id}`);
+      assert.equal(source.sourceType, "Naskah hukum");
+      assert.equal(source.checkedAt, "2026-11-07");
+      assert.match(source.locator!, /PMK 111\/2025 Pasal/);
+      assert.match(source.version!, /1 Januari 2026/);
+    }
+    assert.ok(!found.some(r => r.sourceType === "Artikel opini"));
+  }
+  const prompt = taxConsultationSystemPrompt(searchTaxSources("SP2DK"));
+  for (const phrase of ["status/tanggal aktivasi akun", "semua saluran/tanggal", "DITERIMA KPP", "tidak menerima kuasa atau mengirim tanggapan resmi", "Jangan menghitung tanggal jatuh tempo"]) {
+    assert.ok(prompt.includes(phrase), phrase);
+  }
+  const history = [{ role: "user", content: "Apa itu SP2DK?" }];
+  assert.ok(searchTaxSources("Lalu kapan waktunya?", history).some(r => r.id === "sp2dk-unregistered"));
+  assert.deepEqual(searchTaxSources("Asteroid?", history), []);
 });
 
 test("CV/PT and married turnover have relevant legal support", () => {
