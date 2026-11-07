@@ -14,3 +14,9 @@ Pengujian render melalui tsx perlu transformasi JSX otomatis tersendiri bila kon
 **Why:** Aplikasi dapat berjalan normal melalui Vite sementara tes render gagal dengan `React is not defined`. Menambah impor React ke semua komponen hanya menutupi perbedaan runner.
 
 **How to apply:** Pakai konfigurasi tes yang mewarisi konfigurasi aplikasi dan mengubah JSX ke `react-jsx`. Untuk render komponen bertautan Wouter, gunakan Router dengan lokasi SSR, bukan global browser palsu.
+
+Tes privasi navigasi harus membedakan permintaan aset halaman dari pengiriman data interaksi.
+
+**Why:** Chromium dapat meminta favicon terlambat dan meminta font eksternal lagi saat muat ulang; melarang semua jaringan menghasilkan kegagalan palsu meskipun latihan sepenuhnya lokal.
+
+**How to apply:** Izinkan hanya aset yang dikenal sebelum interaksi dengan URL tepat; tetap tolak pengiriman data dan permintaan dinamis yang tidak diharapkan, termasuk parameter URL yang berubah.
