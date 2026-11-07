@@ -41,6 +41,18 @@ test('empty outline is useful but explicitly incomplete and not ready for offici
   assert.doesNotMatch(text, /Saya menyetujui seluruh|SP2DK telah selesai|DJP telah menyetujui/i);
   assert.equal(text.match(/^\[ \]/gm)?.length, SP2DK_STEPS.length);
 });
+test('screen and exported notes do not silently adopt the uploaded timing calculator', () => {
+  const notes = SP2DK_TIME_NOTES.join('\n');
+  for (const phrase of [
+    'WP terdaftar maupun belum terdaftar',
+    'bukan alasan mengabaikan pemicu pos atau langsung',
+    'hari kerja',
+    'bukan menambah 7 hari untuk setiap permohonan',
+  ]) assert.ok(notes.includes(phrase), phrase);
+  const text = buildSp2dkDraft(emptySp2dkDraft());
+  assert.ok(text.includes(SP2DK_TIME_NOTES[4]));
+  assert.ok(text.includes(SP2DK_TIME_NOTES[1]));
+});
 test('typed facts, multiline Unicode and literal characters survive plaintext generation', () => {
   const draft: Sp2dkDraft = { scope: 'Poin A — periode contoh', facts: 'Baris satu\r\nBaris dua\rBaris tiga: “selisih belum jelas”', evidence: 'Lampiran A & B <contoh>', questions: 'Apa pembandingnya?' };
   const text = buildSp2dkDraft(draft);

@@ -4,7 +4,7 @@ export const SP2DK_SOURCES = [
     kind: 'Naskah peraturan pada situs DJP',
     locator: 'Pasal 5–8 (WP terdaftar), Pasal 15–16 (WP belum terdaftar), Pasal 30 (berlaku 1 Januari 2026).',
     limitation: 'Bagian yang diringkas, bukan analisis seluruh lampiran atau jaminan konsolidasi perubahan terbaru. Surat dan kejadian sebelum berlakunya aturan memerlukan peninjauan tersendiri.',
-    reviewedAt: '2026-11-06' },
+    reviewedAt: '2026-11-07' },
   { id: 'layanan', title: 'DJP — Surat Tanggapan atas SP2DK',
     url: 'https://pajak.go.id/panduan-layanan-pajak/konten/layanan-digital/2025/pengawasan/surat-wajib-pajak/surat-tanggapan-atas-surat-permintaan-penjelasan-data-dan-keterangan-%28sp2dk%29',
     kind: 'Panduan layanan berlabel 2025',
@@ -21,9 +21,10 @@ export const SP2DK_SOURCES = [
 
 export const SP2DK_TIME_NOTES = [
   'WP terdaftar: Pasal 6 ayat (2) mengatur paling lama 14 hari sejak peristiwa yang lebih dahulu sesuai saluran. Pemicu mencakup penerbitan melalui akun WP, pengiriman email terdaftar, bukti pengiriman faksimile/pos/ekspedisi/kurir, atau penyampaian langsung. Bukan selalu sejak surat dibaca atau diterima sendiri.',
-  'WP belum terdaftar: Pasal 16 ayat (2) memiliki pemicu tersendiri, termasuk tanggal aktivasi akun bila akun belum aktif. Jangan menerapkan rumus WP terdaftar secara otomatis.',
-  'Perpanjangan: Pasal 6 ayat (5)–(7) dan Pasal 16 ayat (5)–(7) mengatur paling lama 7 hari setelah jangka tanggapan berakhir, dengan pemberitahuan tertulis yang harus diterima KPP sebelum jangka tanggapan awal berakhir. Bukan perpanjangan otomatis dan bukan cukup membuat draf atau mengirim pada menit terakhir.',
+  'WP belum terdaftar: Pasal 16 ayat (2) mengatur paling lama 14 hari sejak peristiwa yang lebih dahulu: penerbitan bila akun telah aktif, aktivasi akun bila belum aktif, bukti pengiriman pos/ekspedisi/kurir, atau penyampaian langsung. Aktivasi akun bukan alasan mengabaikan pemicu pos atau langsung yang lebih dahulu. Jangan menyalin pemicu email/faksimile WP terdaftar ke cabang ini.',
+  'Perpanjangan bagi WP terdaftar maupun belum terdaftar: Pasal 6 ayat (5)–(7) dan Pasal 16 ayat (5)–(7) mengatur paling lama 7 hari setelah jangka tanggapan berakhir, dengan pemberitahuan tertulis yang harus diterima KPP sebelum jangka tanggapan awal berakhir. Bukan perpanjangan otomatis dan bukan cukup membuat draf atau mengirim pada menit terakhir.',
   'Aplikasi tidak menghitung tanggal jatuh tempo, hari libur, atau keabsahan pemberitahuan. Segera konfirmasikan status WP, semua saluran/tanggal penyampaian, aturan yang relevan, dan waktu tanggapan kepada KPP; jangan menunggu persiapan ini selesai.',
+  'Jangan mengganti istilah “hari” dalam ketentuan ini menjadi “hari kerja” atau memakai rumus penambahan hari kerja. Ayat (8) memperbolehkan tanggapan lebih dari sekali dalam jangka yang ditentukan, bukan menambah 7 hari untuk setiap permohonan perpanjangan.',
 ] as const;
 
 export const SP2DK_STEPS = [

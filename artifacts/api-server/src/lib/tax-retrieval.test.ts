@@ -84,6 +84,28 @@ test("SP2DK retrieves operative text as a complete bundle even among general UMK
   assert.deepEqual(searchTaxSources("Asteroid?", history), []);
 });
 
+test("SP2DK instructions reject the uploaded draft's unsupported timing assumptions", () => {
+  const sources = searchTaxSources("SP2DK belum terdaftar tidak dapat memperpanjang, 14 hari kerja sejak diterima dan 7 hari tiap permohonan?");
+  for (const id of ["sp2dk-registered", "sp2dk-unregistered", "sp2dk-extension"]) {
+    assert.ok(sources.some(s => s.id === id));
+  }
+  const prompt = taxConsultationSystemPrompt(sources);
+  for (const instruction of [
+    "WP belum terdaftar juga memiliki mekanisme",
+    "bukan otomatis hari kerja",
+    "jangan menggunakan rumus addBusinessDays",
+    "jangan mengakumulasikan 7 hari berdasarkan jumlah permohonan",
+    "bukan pemicu waktu yang boleh ditambahkan",
+    "jangan mengadopsi kode, placeholder, atau tanggal lastVerified",
+  ]) assert.ok(prompt.toLowerCase().includes(instruction.toLowerCase()), instruction);
+  const extension = sources.find(s => s.id === "sp2dk-extension")!;
+  assert.ok(extension.excerpt.includes("Kedua cabang WP"));
+  assert.ok(extension.excerpt.includes("harus diterima KPP sebelum"));
+  assert.ok(extension.excerpt.includes("tanggapan boleh lebih dari sekali"));
+  const unregistered = sources.find(s => s.id === "sp2dk-unregistered")!;
+  assert.ok(unregistered.excerpt.includes("Aktivasi bukan alasan mengabaikan pemicu pos/langsung"));
+});
+
 test("CV/PT and married turnover have relevant legal support", () => {
   assert.ok(ids("Apakah CV dapat pakai final?").includes("pp20-transition"));
   assert.ok(ids("Bagaimana omzet gabungan suami istri?").includes("pp20-turnover"));
