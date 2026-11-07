@@ -1,0 +1,69 @@
+.overview-page { min-width: 0; }
+
+/* Select menus render in a portal, outside the page wrapper. */
+.overview-period-options {
+  max-height: min(24rem, var(--radix-select-content-available-height, calc(100dvh - 32px)));
+  max-width: calc(100vw - 32px);
+}
+
+/* Reflow rather than clipping, shrinking text, or hiding financial values. */
+@media (max-width: 480px) {
+  .overview-page { overflow-wrap: anywhere; }
+  .overview-page :is(section, li, a, h1, h2) { min-width: 0; }
+  .overview-page .overview-panel {
+    min-width: 0;
+    padding-inline: 12px;
+  }
+  .overview-page .overview-stats { grid-template-columns: minmax(0, 1fr); }
+  .overview-page button {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    white-space: normal;
+    padding-inline: 8px;
+  }
+  .overview-page button > svg { flex-shrink: 0; }
+  .overview-page [role='combobox'] > span {
+    display: block;
+    -webkit-line-clamp: unset;
+    white-space: normal;
+  }
+  .overview-page .overview-section-heading {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .overview-page .overview-section-heading h2 {
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .overview-page .overview-section-heading h2 svg { flex-shrink: 0; }
+  .overview-page .overview-upcoming {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+  }
+  .overview-page .overview-upcoming > div:last-child {
+    grid-column: 2;
+    text-align: left;
+  }
+  .overview-page .overview-upcoming button {
+    height: 1.75rem;
+    padding-inline: 0;
+  }
+  .overview-page .overview-payment-row,
+  .overview-page .overview-consult {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-inline: 8px;
+  }
+  .overview-page .overview-payment-row > div,
+  .overview-page .overview-consult > div {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .overview-page [role='note'] { padding-inline: 8px; gap: 8px; }
+}

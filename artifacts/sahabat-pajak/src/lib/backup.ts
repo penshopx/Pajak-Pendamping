@@ -4,6 +4,7 @@ import { assertTradeLedger, validateTradeBill, type TradeBill } from './trade-le
 import { validateLearningCompleted } from './learning-path';
 import { assertSptProgress, type SptProgress } from './spt-preparation';
 import type { Obligation, Payment } from './store';
+import { assertServiceRooms, ROOM_STEP_IDS, type ServiceRoom } from './service-center';
 
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
 export const MAX_BACKUP_ROWS = 5000;
@@ -36,10 +37,16 @@ const schema = z.object({
   sptProgress: z.custom<SptProgress>(value => {
     try { assertSptProgress(value); return Object.keys(value as object).length <= 500; } catch { return false; }
   }).optional(),
+  serviceRooms: rows(z.object({
+    id, title: text(80).min(1), topic: z.enum(['umkm', 'coretax', 'pembayaran', 'spt', 'sp2dk']),
+    period: z.string(), checked: z.array(z.enum(ROOM_STEP_IDS)),
+  })).refine(value => {
+    try { assertServiceRooms(value); return true; } catch { return false; }
+  }).optional(),
 });
 export type BackupData = z.infer<typeof schema>;
-export type RestorableData = Omit<Required<BackupData>, 'obligations' | 'payments'> & {
-  obligations: Obligation[]; payments: Payment[];
+export type RestorableData = Omit<Required<BackupData>, 'obligations' | 'payments' | 'serviceRooms'> & {
+  obligations: Obligation[]; payments: Payment[]; serviceRooms?: ServiceRoom[];
 };
 export type RestoreMode = 'merge' | 'replace';
 
@@ -48,7 +55,7 @@ export function validateBackup(value: unknown): BackupData {
   const result = schema.safeParse(value);
   if (!result.success) {
     const path = result.error.issues[0]?.path.join('.') || 'struktur';
-    throw new Error(`Cadangan tidak valid pada ${path}. Periksa struktur, batas 5.000 catatan per jenis, tanggal nyata (1900–2100), kategori, dan rupiah bulat (maksimal 1 triliun).`);
+    throw new Error(`Cadangan tidak valid pada ${path}. Periksa struktur, batas 5.000 catatan per jenis / 100 ruang persiapan, tanggal nyata (1900–2100), kategori, dan rupiah bulat (maksimal 1 triliun).`);
   }
   assertTradeLedger(result.data.tradeBills ?? [], result.data.transactions ?? []);
   return result.data;
@@ -68,6 +75,7 @@ export function restoreSnapshot(s: RestorableData) {
   return JSON.stringify({
     profile: s.profile, obligations: s.obligations, payments: s.payments, transactions: s.transactions,
     tradeBills: s.tradeBills, learningCompleted: s.learningCompleted, sptProgress: s.sptProgress,
+    serviceRooms: s.serviceRooms ?? [],
   });
 }
 function combine<T extends { id: string }>(local: T[], incoming: T[]) {
@@ -96,6 +104,8 @@ export function buildRestore<T extends RestorableData>(current: T, input: Backup
     learningCompleted: backup.learningCompleted === undefined ? current.learningCompleted
       : mode === 'replace' ? backup.learningCompleted : [...new Set([...current.learningCompleted, ...backup.learningCompleted])],
     sptProgress: backup.sptProgress === undefined ? current.sptProgress : mode === 'replace' ? backup.sptProgress : sptProgress,
+    ...(current.serviceRooms !== undefined || backup.serviceRooms !== undefined
+      ? { serviceRooms: choose(current.serviceRooms ?? [], backup.serviceRooms) } : {}),
   };
   // Also catches combined limits, broken links and overpaid bills after ID collisions.
   validateBackup(next);

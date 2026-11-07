@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ObligationDialog, PaymentDialog } from '@/components/record-forms';
+import '@/styles/overview.css';
 
 export default function Overview() {
   usePageTitle('Ringkasan');
@@ -40,7 +41,7 @@ export default function Overview() {
   const empty = obligations.length === 0 && payments.length === 0;
 
   return (
-    <>
+    <div className="overview-page">
       <PageHeader eyebrow={profile.businessName || 'Ringkasan'}
         title={profile.businessName ? 'Posisi pajak Anda' : 'Selamat datang'}
         desc="Semua angka di sini dihitung dari catatan yang Anda masukkan di peramban ini. Bukan data dari DJP."
@@ -51,7 +52,7 @@ export default function Overview() {
 
       {empty && (
         <div className="rise mb-8 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-          <div className="relative overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/20 via-card to-card p-6 sm:p-8">
+          <div className="overview-panel relative overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/20 via-card to-card p-6 sm:p-8">
             <div className="grid-lines absolute inset-0 opacity-30 [mask-image:linear-gradient(to_left,black,transparent)]" />
             <div className="relative">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Mulai dari satu kewajiban.</h2>
@@ -62,7 +63,7 @@ export default function Overview() {
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border border-dashed border-[hsl(var(--warn)/.5)] bg-card/60 p-6">
+          <div className="overview-panel rounded-2xl border border-dashed border-[hsl(var(--warn)/.5)] bg-card/60 p-6">
             <div className="flex items-center gap-2 text-[hsl(var(--warn))] font-semibold text-sm"><FlaskConical className="h-4 w-4" />Ingin mencoba dulu?</div>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Muat beberapa catatan berlabel <b className="text-foreground">[Contoh]</b>. Angkanya fiktif, hanya untuk melihat cara kerja aplikasi, dan bisa dihapus sekali klik.</p>
             <Button variant="outline" className="press mt-4 border-[hsl(var(--warn)/.5)]" onClick={loadDemo} data-testid="button-load-demo">Muat data contoh</Button>
@@ -82,17 +83,17 @@ export default function Overview() {
           <h2 id="period-h" className="text-lg font-bold text-white mr-auto">Periode: <span className="text-accent">{periodLabel}</span></h2>
           <Select value={month} onValueChange={setMonth}>
             <SelectTrigger className="w-40 bg-card border-input" aria-label="Bulan" data-testid="select-month"><SelectValue /></SelectTrigger>
-            <SelectContent>
+            <SelectContent className="overview-period-options">
               <SelectItem value="all">Sepanjang tahun</SelectItem>
               {MONTHS.map((m, i) => <SelectItem key={m} value={String(i + 1).padStart(2, '0')}>{m}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={year} onValueChange={setYear}>
             <SelectTrigger className="w-28 bg-card border-input" aria-label="Tahun" data-testid="select-year"><SelectValue /></SelectTrigger>
-            <SelectContent>{years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
+            <SelectContent className="overview-period-options">{years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="overview-stats grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Stat label="Kewajiban di periode" value={String(obs.length)} sub={`${done} selesai, ${open.length} belum`} testid="stat-obligations">
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Persentase selesai">
               <div className="h-full origin-left rounded-full bg-primary transition-transform duration-700" style={{ transform: `scaleX(${pct / 100})` }} />
@@ -105,8 +106,8 @@ export default function Overview() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-        <section className="rise rounded-2xl border border-border bg-card p-5 sm:p-6" aria-labelledby="up-h">
-          <div className="mb-4 flex items-center justify-between">
+        <section className="overview-panel rise rounded-2xl border border-border bg-card p-5 sm:p-6" aria-labelledby="up-h">
+          <div className="overview-section-heading mb-4 flex items-center justify-between">
             <h2 id="up-h" className="text-lg font-bold text-white flex items-center gap-2"><CalendarClock className="h-5 w-5 text-primary" />Tenggat terdekat</h2>
             <Link href="/kewajiban" className="text-sm font-medium text-accent hover:underline underline-offset-4" data-testid="link-all-obligations">Semua</Link>
           </div>
@@ -117,13 +118,13 @@ export default function Overview() {
               {upcoming.map((o) => {
                 const d = daysUntil(o.dueDate);
                 return (
-                  <li key={o.id} className="flex items-center gap-3 py-3" data-testid={`row-upcoming-${o.id}`}>
+                  <li key={o.id} className="overview-upcoming flex items-center gap-3 py-3" data-testid={`row-upcoming-${o.id}`}>
                     <button onClick={() => toggleObligation(o.id)} aria-label={`Tandai selesai: ${o.title}`} data-testid={`button-toggle-${o.id}`}
                       className="press grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-input text-transparent hover:border-[hsl(var(--success))] hover:text-[hsl(var(--success))] transition-colors">
                       <CircleCheck className="h-4 w-4" />
                     </button>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate font-medium text-white">{o.title}</div>
+                      <div className="break-words [overflow-wrap:anywhere] font-medium text-white">{o.title}</div>
                       <div className="text-xs text-muted-foreground">{o.taxType} · {formatPeriod(o.period)}</div>
                     </div>
                     <div className="text-right">
@@ -137,8 +138,8 @@ export default function Overview() {
           )}
         </section>
 
-        <section className="rise rounded-2xl border border-border bg-card p-5 sm:p-6" aria-labelledby="pay-h">
-          <div className="mb-4 flex items-center justify-between">
+        <section className="overview-panel rise rounded-2xl border border-border bg-card p-5 sm:p-6" aria-labelledby="pay-h">
+          <div className="overview-section-heading mb-4 flex items-center justify-between">
             <h2 id="pay-h" className="text-lg font-bold text-white flex items-center gap-2"><Receipt className="h-5 w-5 text-primary" />Pembayaran terakhir</h2>
             <Link href="/pembayaran" className="text-sm font-medium text-accent hover:underline underline-offset-4" data-testid="link-all-payments">Semua</Link>
           </div>
@@ -147,7 +148,7 @@ export default function Overview() {
           ) : (
             <ul className="space-y-2">
               {[...payments].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4).map((p) => (
-                <li key={p.id} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2.5">
+                <li key={p.id} className="overview-payment-row flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2.5">
                   <div><div className="text-sm font-medium text-white">{p.taxType}</div><div className="text-xs text-muted-foreground">{formatDate(p.date)}</div></div>
                   <div className="num text-sm font-semibold text-white">{rupiah(p.amount)}</div>
                 </li>
@@ -159,7 +160,7 @@ export default function Overview() {
       </div>
 
       <section className="rise mt-8" aria-labelledby="res-h">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="overview-section-heading mb-4 flex items-center justify-between">
           <h2 id="res-h" className="text-lg font-bold text-white flex items-center gap-2"><Library className="h-5 w-5 text-primary" />Bacaan resmi yang berguna</h2>
           <Link href="/pustaka" className="text-sm font-medium text-accent hover:underline underline-offset-4" data-testid="link-library">Buka pustaka</Link>
         </div>
@@ -174,7 +175,7 @@ export default function Overview() {
           <div className="grid gap-3 sm:grid-cols-2">
             {(resources.data ?? []).slice(0, 4).map((r) => (
               <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" data-testid={`link-resource-${r.id}`}
-                className="lift group rounded-xl border border-border bg-card p-4">
+                className="overview-panel lift group rounded-xl border border-border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-[11px] font-semibold uppercase tracking-widest text-accent">{r.category}</div>
                   <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
@@ -185,22 +186,25 @@ export default function Overview() {
             ))}
           </div>
         )}
-        <Link href="/konsultasi" data-testid="link-consult-banner" className="lift mt-4 flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4">
+        <Link href="/konsultasi" data-testid="link-consult-banner" className="overview-consult lift mt-4 flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4">
           <MessagesSquare className="h-6 w-6 text-primary shrink-0" />
           <div className="flex-1"><div className="font-semibold text-white">Bingung istilahnya?</div><div className="text-sm text-muted-foreground">Tanyakan ke asisten yang menjawab berdasarkan sumber resmi.</div></div>
           <ArrowUpRight className="h-5 w-5 text-primary" />
+        </Link>
+        <Link href="/layanan" data-testid="link-service-center" className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent underline-offset-4 hover:underline">
+          Pusat Layanan: ruang persiapan per topik dan periode <ArrowUpRight className="h-4 w-4" />
         </Link>
       </section>
 
       <ObligationDialog open={obOpen} onOpenChange={setObOpen} />
       <PaymentDialog open={payOpen} onOpenChange={setPayOpen} />
-    </>
+    </div>
   );
 }
 
 function Stat({ label, value, sub, testid, mono, accent, danger, children }: { label: string; value: string; sub: string; testid: string; mono?: boolean; accent?: boolean; danger?: boolean; children?: ReactNode }) {
   return (
-    <div className={`lift rounded-2xl border bg-card p-4 sm:p-5 ${danger ? 'border-destructive/50' : accent ? 'border-primary/40' : 'border-border'}`}>
+    <div className={`overview-panel lift rounded-2xl border bg-card p-4 sm:p-5 ${danger ? 'border-destructive/50' : accent ? 'border-primary/40' : 'border-border'}`}>
       <div className="text-xs font-medium text-muted-foreground">{label}</div>
       <div className={`mt-2 break-words text-xl sm:text-2xl font-bold ${mono ? 'num' : 'font-display'} ${danger ? 'text-destructive' : 'text-white'}`} data-testid={testid}>{value}</div>
       <div className="mt-1 text-xs text-muted-foreground">{sub}</div>

@@ -3,6 +3,7 @@ import { MAX_TRANSACTIONS, validateTransaction, type BusinessTransaction } from 
 import { buildRestore, restoreSnapshot, type BackupData, type RestoreMode } from './backup';
 import { updateLearningCompleted, validateLearningCompleted } from './learning-path';
 import { assertSptProgress, resetSptScope, setSptItem, type SptProgress, type SptKind, type SptItemId } from './spt-preparation';
+import { assertServiceRooms, deleteServiceRoom, saveServiceRoom, setServiceRoomStep, type ServiceRoom, type ServiceRoomInput, type RoomStepId } from './service-center';
 import {
   assertTradeLedger, deleteBillInLedger, linkTransactionInLedger, recordPaymentInLedger,
   saveBillInLedger, unlinkTransactionInLedger, type TradeBill, type TradeLedger, type TradePaymentInput,
@@ -27,10 +28,10 @@ export interface ChatMessage {
   sources?: ChatSource[]; disclaimer?: string; checkedAt?: string;
 }
 
-interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[]; learningCompleted: string[]; sptProgress: SptProgress }
+interface State { profile: Profile; obligations: Obligation[]; payments: Payment[]; chat: ChatMessage[]; transactions: BusinessTransaction[]; tradeBills: TradeBill[]; learningCompleted: string[]; sptProgress: SptProgress; serviceRooms: ServiceRoom[] }
 
 const KEY = 'sahabat-pajak:v1';
-const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [], learningCompleted: [], sptProgress: {} };
+const EMPTY: State = { profile: { businessName: '', businessType: 'orang-pribadi' }, obligations: [], payments: [], chat: [], transactions: [], tradeBills: [], learningCompleted: [], sptProgress: {}, serviceRooms: [] };
 const READ_ERROR = 'Data lokal tidak dapat dibaca dengan aman. Data asli tidak dihapus. Jangan hapus data peramban; pulihkan cadangan atau hubungi pengelola sebelum melanjutkan.';
 
 export const TAX_TYPES = [
@@ -51,6 +52,7 @@ function readState(): State {
     assertTradeLedger(p.tradeBills ?? [], p.transactions ?? []);
     if (p.learningCompleted !== undefined && !validateLearningCompleted(p.learningCompleted)) throw new Error(READ_ERROR);
     if (p.sptProgress !== undefined) assertSptProgress(p.sptProgress);
+    if (p.serviceRooms !== undefined) assertServiceRooms(p.serviceRooms);
     return {
       ...p,
       profile: { ...EMPTY.profile, ...(p.profile ?? {}) },
@@ -61,6 +63,7 @@ function readState(): State {
       tradeBills: p.tradeBills ?? [],
       learningCompleted: p.learningCompleted ?? [],
       sptProgress: p.sptProgress ?? {},
+      serviceRooms: p.serviceRooms ?? [],
     };
   } catch { throw new Error(READ_ERROR); }
 }
@@ -72,6 +75,9 @@ function load() {
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
 interface Ctx extends State {
+  savePreparationRoom: (input: ServiceRoomInput & { id?: string }) => void;
+  setPreparationRoomStep: (id: string, step: RoomStepId, checked: boolean) => void;
+  deletePreparationRoom: (id: string) => void;
   restoreBackup: (backup: BackupData, mode: RestoreMode, expectedSnapshot: string) => void;
   setSptChecked: (kind: SptKind, year: number, item: SptItemId, checked: boolean) => void;
   resetSptProgress: (kind: SptKind, year: number) => void;
@@ -160,6 +166,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setState(s => ({ ...s, sptProgress: setSptItem(s.sptProgress, kind, year, item, checked) })), [setState]);
   const resetSptProgress = useCallback((kind: SptKind, year: number) =>
     setState(s => ({ ...s, sptProgress: resetSptScope(s.sptProgress, kind, year) })), [setState]);
+  const savePreparationRoom = useCallback((input: ServiceRoomInput & { id?: string }) =>
+    setState(s => ({ ...s, serviceRooms: saveServiceRoom(s.serviceRooms, { ...input, id: input.id ?? uid() }, input.id !== undefined) })), [setState]);
+  const setPreparationRoomStep = useCallback((id: string, step: RoomStepId, checked: boolean) =>
+    setState(s => ({ ...s, serviceRooms: setServiceRoomStep(s.serviceRooms, id, step, checked) })), [setState]);
+  const deletePreparationRoom = useCallback((id: string) =>
+    setState(s => ({ ...s, serviceRooms: deleteServiceRoom(s.serviceRooms, id) })), [setState]);
   const saveTransaction = useCallback((input: Omit<BusinessTransaction, 'id'> & { id?: string }) => setState(s => {
     const previous = s.transactions.find(t => t.id === input.id);
     if (input.tradeBillId !== undefined && input.tradeBillId !== previous?.tradeBillId) {
@@ -219,9 +231,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ...state, restoreBackup, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment,
     addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
     saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction,
-    setLearningComplete, resetLearningProgress,
+    setLearningComplete, resetLearningProgress, savePreparationRoom, setPreparationRoomStep, deletePreparationRoom,
   }), [state, restoreBackup, setSptChecked, resetSptProgress, setProfile, saveObligation, deleteObligation, toggleObligation, savePayment, deletePayment, addChat, clearChat, loadDemo, removeDemo, clearAll, hasDemo, storageError, saveTransaction, deleteTransaction,
-    saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction, setLearningComplete, resetLearningProgress]);
+    saveTradeBill, deleteTradeBill, recordTradePayment, linkTradeTransaction, unlinkTradeTransaction, setLearningComplete, resetLearningProgress,
+    savePreparationRoom, setPreparationRoomStep, deletePreparationRoom]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { LayoutGrid, MessagesSquare, CalendarClock, Receipt, Library, Settings2, HardDrive, Wallet, FileSpreadsheet, Menu, AlertTriangle, ArrowLeftRight, GraduationCap, BookText, FileQuestion } from 'lucide-react';
+import { LayoutGrid, MessagesSquare, CalendarClock, Receipt, Library, Settings2, HardDrive, Wallet, FileSpreadsheet, Menu, AlertTriangle, ArrowLeftRight, GraduationCap, BookText, FileQuestion, LifeBuoy } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 const tid = (l: string) => l.toLowerCase().replace(/&/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
@@ -12,10 +12,11 @@ const NAV = [
   { href: '/piutang-utang', label: 'Piutang & Utang', icon: ArrowLeftRight },
   { href: '/laba-rugi', label: 'Laba Rugi', icon: FileSpreadsheet },
   { href: '/pembayaran', label: 'Pembayaran', icon: Receipt },
+  { href: '/layanan', label: 'Pusat Layanan', icon: LifeBuoy },
   { href: '/konsultasi', label: 'Konsultasi', icon: MessagesSquare },
   { href: '/belajar', label: 'Belajar', icon: GraduationCap },
   { href: '/glosarium', label: 'Glosarium', icon: BookText },
-  { href: '/sp2dk', label: 'SP2DK', icon: FileQuestion },
+  { href: '/sp2dk', label: 'SP2DK', icon: FileQuestion, LifeBuoy },
   { href: '/pustaka', label: 'Pustaka', icon: Library },
   { href: '/pengaturan', label: 'Pengaturan', icon: Settings2 },
 ];
@@ -46,7 +47,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mt-1">Pendamping UMKM</div>
           </div>
         </Link>
-        <nav className="flex flex-col gap-1" aria-label="Navigasi utama">
+        <nav className="-mx-1 flex min-h-0 flex-col gap-1 overflow-y-auto px-1" aria-label="Navigasi utama">
           {NAV.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} data-testid={`nav-${tid(label)}`}
               aria-current={active(href) ? 'page' : undefined}
@@ -57,12 +58,12 @@ export function Shell({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
-        <div className="mt-auto rounded-xl border border-border bg-card/70 p-3.5 text-xs leading-relaxed text-muted-foreground">
+        <div className="mt-auto shrink-0 pt-4"><div className="rounded-xl border border-border bg-card/70 p-3.5 text-xs leading-relaxed text-muted-foreground">
           <div className="flex items-center gap-2 text-foreground font-semibold mb-1.5"><HardDrive className="h-3.5 w-3.5 text-accent" /> Tersimpan di peramban ini</div>
           Data tidak disinkronkan ke server atau perangkat lain.
           {profile.businessName && <div className="mt-2 text-foreground truncate" data-testid="text-sidebar-business">{profile.businessName}</div>}
           {hasDemo && <div className="mt-2 inline-block rounded bg-[hsl(var(--warn)/.15)] px-1.5 py-0.5 text-[hsl(var(--warn))] font-semibold">Data contoh aktif</div>}
-        </div>
+        </div></div>
       </aside>
 
       <header className="md:hidden sticky top-0 z-30 flex items-center gap-2.5 border-b border-border bg-background/85 backdrop-blur px-4 py-3">
@@ -86,11 +87,11 @@ export function Shell({ children }: { children: ReactNode }) {
       {more && (
         <div className="md:hidden fixed inset-0 z-40" role="dialog" aria-modal="true" aria-label="Menu lainnya">
           <button className="absolute inset-0 bg-background/70 backdrop-blur-sm" aria-label="Tutup menu" onClick={() => setMore(false)} data-testid="button-close-more" />
-          <nav aria-label="Semua menu" className="rise absolute inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] grid grid-cols-2 gap-1.5 rounded-2xl border border-border bg-sidebar p-2">
+          <nav aria-label="Semua menu" className="rise absolute inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] grid max-h-[calc(100dvh-6rem)] grid-cols-1 min-[480px]:grid-cols-2 gap-1.5 overflow-y-auto rounded-2xl border border-border bg-sidebar p-2">
             {NAV.map(({ href, label, icon: Icon }) => (
               <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined} data-testid={`mnav-more-${tid(label)}`}
-                className={`press flex items-center gap-2.5 rounded-xl px-3 py-3 text-sm font-semibold ${active(href) ? 'bg-sidebar-accent text-white' : 'text-foreground/85'}`}>
-                <Icon className={`h-[18px] w-[18px] ${active(href) ? 'text-primary' : ''}`} />{label}
+                className={`press flex min-w-0 items-center gap-2 rounded-xl px-2 py-3 text-sm font-semibold ${active(href) ? 'bg-sidebar-accent text-white' : 'text-foreground/85'}`}>
+                <Icon className={`h-[18px] w-[18px] shrink-0 ${active(href) ? 'text-primary' : ''}`} /><span className="min-w-0 break-words">{label}</span>
               </Link>
             ))}
           </nav>

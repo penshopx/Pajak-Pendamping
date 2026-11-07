@@ -23,7 +23,7 @@ export default function Pengaturan() {
   const dirty = name.trim() !== s.profile.businessName || type !== s.profile.businessType;
 
   const exportJSON = () => {
-    downloadFile(`sahabat-pajak-${todayISO()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), note: 'Data lokal Sahabat Pajak. Tidak diverifikasi DJP. Progres persiapan SPT hanya pengakuan pengguna, bukan bukti pelaporan. Transaksi usaha adalah rekap kas dan penyesuaian HPP manual, bukan penghasilan kena pajak. Tagihan belum dibayar tidak otomatis masuk laba rugi. Progres belajar adalah penanda pribadi, bukan bukti pemenuhan kewajiban.', profile: s.profile, obligations: s.obligations, payments: s.payments, transactions: s.transactions, tradeBills: s.tradeBills, learningCompleted: s.learningCompleted, sptProgress: s.sptProgress }, null, 2), 'application/json');
+    downloadFile(`sahabat-pajak-${todayISO()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), note: 'Data lokal Sahabat Pajak. Tidak diverifikasi DJP. Progres persiapan SPT hanya pengakuan pengguna, bukan bukti pelaporan. Transaksi usaha adalah rekap kas dan penyesuaian HPP manual, bukan penghasilan kena pajak. Tagihan belum dibayar tidak otomatis masuk laba rugi. Progres belajar dan ruang persiapan adalah penanda pribadi, bukan bukti pemenuhan kewajiban.', profile: s.profile, obligations: s.obligations, payments: s.payments, transactions: s.transactions, tradeBills: s.tradeBills, learningCompleted: s.learningCompleted, sptProgress: s.sptProgress, serviceRooms: s.serviceRooms }, null, 2), 'application/json');
     toast({ title: 'JSON diunduh' });
   };
   const exportCSV = (kind: 'kewajiban' | 'pembayaran') => {
@@ -71,7 +71,7 @@ export default function Pengaturan() {
           <p className="mt-1 text-sm text-muted-foreground"><span className="num text-foreground">{s.obligations.length}</span> kewajiban, <span className="num text-foreground">{s.payments.length}</span> pembayaran, <span className="num text-foreground">{s.transactions.length}</span> transaksi usaha, <span className="num text-foreground">{s.tradeBills.length}</span> tagihan piutang/utang tersimpan.</p>
           <div className="mt-5 grid gap-2">
             <p className="text-sm text-muted-foreground">Progres belajar: <span className="num text-foreground">{learningSummary(s.learningCompleted).done} dari {learningSummary(s.learningCompleted).total}</span> tahap ditandai selesai. Ini bukan status pemenuhan pajak.</p>
-            <ExportBtn icon={FileJson} title="Semua catatan usaha (JSON)" desc="Profil, kewajiban, pembayaran, transaksi, piutang/utang, progres belajar dan persiapan SPT; tanpa chat" onClick={exportJSON} id="json" />
+            <ExportBtn icon={FileJson} title="Semua catatan usaha (JSON)" desc="Profil, kewajiban, pembayaran, transaksi, piutang/utang, progres belajar, persiapan SPT dan ruang persiapan; tanpa chat" onClick={exportJSON} id="json" />
             <ExportBtn icon={FileSpreadsheet} title="Kewajiban (CSV)" desc="Buka di Excel atau Google Sheets" onClick={() => exportCSV('kewajiban')} id="csv-obligations" />
             <ExportBtn icon={FileSpreadsheet} title="Pembayaran (CSV)" desc="Termasuk NTPN yang Anda catat" onClick={() => exportCSV('pembayaran')} id="csv-payments" />
             <ExportBtn icon={FileSpreadsheet} title="Transaksi usaha (CSV)" desc="Seluruh periode, pemasukan dan pengeluaran" id="csv-transactions"

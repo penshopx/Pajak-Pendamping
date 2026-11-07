@@ -9,7 +9,7 @@ import { Confirm } from './confirm';
 
 const sections = [
   ['obligations', 'kewajiban'], ['payments', 'pembayaran'], ['transactions', 'transaksi usaha'],
-  ['tradeBills', 'piutang/utang'], ['learningCompleted', 'tahap belajar'],
+  ['tradeBills', 'piutang/utang'], ['learningCompleted', 'tahap belajar'], ['serviceRooms', 'ruang persiapan'],
 ] as const;
 
 export function BackupRestore() {
@@ -81,7 +81,7 @@ export function BackupRestore() {
             <thead><tr><th className="py-2">Data</th><th>Sekarang</th><th>Dalam file</th><th>Setelah pemulihan</th></tr></thead>
             <tbody>{sections.map(([key, label]) => <tr key={key} className="border-t border-border">
               <th className="py-2 font-normal">{label}</th><td>{store[key].length}</td>
-              <td>{backup[key]?.length ?? 'Tidak ada; dipertahankan'}</td><td>{preview?.[key].length ?? '—'}</td>
+              <td>{backup[key]?.length ?? 'Tidak ada; dipertahankan'}</td><td>{preview?.[key]?.length ?? '—'}</td>
             </tr>)}
               <tr className="border-t border-border"><th className="py-2 font-normal">Lingkup persiapan SPT</th><td>{Object.keys(store.sptProgress).length}</td>
                 <td>{backup.sptProgress === undefined ? 'Tidak ada; dipertahankan' : Object.keys(backup.sptProgress).length}</td>

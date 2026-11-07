@@ -16,6 +16,7 @@ import Pengaturan from '@/pages/pengaturan';
 import Transaksi from '@/pages/transaksi';
 import LabaRugi from '@/pages/laba-rugi';
 import PiutangUtang from '@/pages/piutang-utang';
+import Layanan from '@/pages/layanan';
 import { Shell } from '@/components/shell';
 import { StoreProvider } from '@/lib/store';
 import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -28,6 +29,7 @@ function Router() {
       <RoutedErrorBoundary>
         <Switch>
           <Route path="/" component={Overview} />
+          <Route path="/layanan" component={Layanan} />
           <Route path="/konsultasi" component={Konsultasi} />
           <Route path="/kewajiban" component={Kewajiban} />
           <Route path="/pembayaran" component={Pembayaran} />

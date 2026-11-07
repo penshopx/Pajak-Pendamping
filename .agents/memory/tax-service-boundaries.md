@@ -21,6 +21,12 @@ Pengguna meminta mengadopsi fitur-fitur Gustafta yang relevan dan menyesuaikanny
 
 **How to apply:** Jadikan Gustafta referensi pola ruang kerja, konsultasi, dokumen, dan alat bantu. Tetap gunakan konteks UMKM/perpajakan dan batas layanan Sahabat Pajak; materi promosi Gustafta bukan sumber hukum pajak atau bukti integrasi aplikasi.
 
+Tahap adopsi yang dipilih pengguna adalah “Pusat layanan terpadu”: konsultasi bertopik dan ruang persiapan lokal, bukan unggahan dokumen sensitif, penyimpanan awan, atau akun tim.
+
+**Why:** Pengguna memilih paket tersebut setelah cakupan dan pemisahan paket dokumen serta akses tim dijelaskan.
+
+**How to apply:** Ruang persiapan mengelompokkan langkah umum pengguna dan bukan bukti kepatuhan. Ruang topik SP2DK tidak memperluas izin penyimpanan isi surat atau kerangka tanggapan; isian kerangka pada panduan SP2DK tetap terpisah dan hanya untuk sesi itu.
+
 Peta belajar UMKM menghubungkan materi pengantar dengan panduan dan pustaka yang sudah ada; progresnya adalah penanda belajar mandiri, bukan status kepatuhan.
 
 **Why:** Pengguna memilih peta belajar setelah meninjau referensi seminar, spreadsheet fiskal, dan AI komersial. Pilihan itu bukan permintaan mengubah rekap kas menjadi mesin pajak atau mengesahkan pemahaman pengguna.
