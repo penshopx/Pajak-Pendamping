@@ -7,6 +7,7 @@ import { LEARNING_STEPS, learningQuestionHref, learningSummary, type LearningSte
 import { Notice, PageHeader } from '@/components/shell';
 import { Confirm } from '@/components/confirm';
 import { Button } from '@/components/ui/button';
+import { LearningQuiz } from '@/components/learning-quiz';
 
 const DESC = 'Peta belajar pajak UMKM: enam tahap mandiri untuk memahami apa yang perlu diperiksa dan dipraktikkan. Progres hanya catatan belajar, bukan pemenuhan kewajiban pajak.';
 
@@ -72,6 +73,7 @@ function StepCard({ step, index, done, onToggle, error }: { step: LearningStep; 
           <List title="Periksa diri" items={step.selfCheck} tone="text-[hsl(var(--success))]" testid={`list-selfcheck-${step.id}`} />
         </div>
       </div>
+      <LearningQuiz stepId={step.id} />
       <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-5">
         {actions.map((a, i) => <Link key={a.href} href={a.href} data-testid={`link-step-action-${step.id}-${i}`}
           className="press inline-flex items-center gap-1.5 rounded-xl border border-input bg-background/60 px-3.5 py-2 text-sm font-semibold text-white hover:border-primary">

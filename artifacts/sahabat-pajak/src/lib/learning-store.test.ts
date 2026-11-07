@@ -28,7 +28,7 @@ const legacy = {
   obligations: [{ id: 'sentinel', status: 'belum' }], payments: [], chat: [],
   transactions: [{ id: 'cash', date: '2026-06-01', kind: 'pemasukan', category: 'penjualan', amount: 100, description: 'Test sale', notes: '' }],
   tradeBills: [],
-  sptPreparation: { '2025': { source: 'independent-progress', ready: false } },
+  sptProgress: { 'op:2025': { documents: true, bpe: false } },
 };
 test('legacy snapshot loads without learning marks; completion, undo and reset preserve all other records', () => {
   const h = harness(JSON.stringify(legacy));

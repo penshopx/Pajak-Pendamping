@@ -21,6 +21,12 @@ Peta belajar UMKM menghubungkan materi pengantar dengan panduan dan pustaka yang
 
 **How to apply:** Jangan menganggap membuka sumber atau memperoleh jawaban AI berarti pelajaran selesai. Pisahkan progres belajar dari persiapan SPT per tahun, pembayaran, dan pelaporan nyata. Pertanyaan dari materi hanya boleh menjadi draf yang ditinjau serta dikirim sendiri oleh pengguna.
 
+Latihan pemahaman tidak perlu menyimpan riwayat atau nilai secara permanen; pertahankan pilihan ini kecuali ada permintaan baru untuk melanjutkan latihan lintas kunjungan.
+
+**Why:** Cakupan latihan meminta umpan balik konsep, bukan pelacakan prestasi. Tanpa penyimpanan jawaban, tidak ada nilai latihan yang bisa tercampur dalam cadangan keuangan atau disalahartikan sebagai penilaian kepatuhan.
+
+**How to apply:** Jelaskan bahwa hasil hilang saat keluar atau memuat ulang. Jika penyimpanan diminta kemudian, rancang pemisahan, kegagalan simpan, dan reset secara eksplisit; jangan memasukkannya diam-diam ke progres belajar atau SPT.
+
 Referensi konsultan pajak dan PJAP digunakan untuk pustaka dan konsultasi AI, bukan untuk video atau klaim status profesi aplikasi.
 
 **Why:** Pengguna secara eksplisit memilih “Tambahkan ke pustaka dan AI” untuk referensi tambahan tersebut.
