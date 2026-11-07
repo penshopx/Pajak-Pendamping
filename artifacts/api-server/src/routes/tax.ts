@@ -1,9 +1,9 @@
 import { Router, type IRouter } from "express";
-import { ConsultTaxBody, ConsultTaxResponse, ListTaxResourcesResponse } from "@workspace/api-zod";
+import { ConsultTaxBody, ConsultTaxResponse, ListTaxResourcesResponse, GetSp2dkReadinessResponse } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { taxResources, taxDisclaimer } from "../lib/tax-resources";
 import { taxCheckedAt } from "../lib/tax-excerpts";
-import { consultationSources } from "../lib/tax-source-monitor";
+import { consultationSources, sp2dkReadiness } from "../lib/tax-source-monitor";
 import { appStatusAnswer, insufficientSourcesAnswer, searchTaxSources } from "../lib/tax-retrieval";
 import { taxConsultationSystemPrompt } from "../lib/tax-consultation-prompt";
 import { gateTaxAnswer } from "../lib/tax-answer-gate";
@@ -16,6 +16,15 @@ let active = 0;
 
 router.get("/tax/resources", (_req, res) => {
   res.json(ListTaxResourcesResponse.parse(taxResources));
+});
+
+router.get("/tax/sp2dk-readiness", async (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  try {
+    res.json(GetSp2dkReadinessResponse.parse(await sp2dkReadiness()));
+  } catch {
+    res.status(503).json({ error: "Status rujukan belum dapat diperiksa. Jangan anggap rujukan siap untuk AI." });
+  }
 });
 
 router.post("/tax/consult", async (req, res): Promise<void> => {

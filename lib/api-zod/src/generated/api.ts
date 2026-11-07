@@ -9,6 +9,20 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Status publik kesiapan rujukan SP2DK untuk konsultasi
+ */
+export const GetSp2dkReadinessResponse = zod.object({
+  "ready": zod.boolean(),
+  "evaluatedAt": zod.string(),
+  "sources": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['ready', 'not_checked', 'awaiting_review', 'access_failed', 'expired', 'needs_review', 'companion_held'])
+}))
+})
+
+
+/**
  * @summary Pustaka sumber dan panduan DJP
  */
 export const ListTaxResourcesResponseItem = zod.object({

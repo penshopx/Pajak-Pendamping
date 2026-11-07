@@ -11,5 +11,8 @@ export * from './consultationInput';
 export * from './consultationMessage';
 export * from './consultationMessageRole';
 export * from './healthStatus';
+export * from './publicSourceReadiness';
+export * from './publicSourceReadinessStatus';
+export * from './sp2dkReadiness';
 export * from './taxResource';
 export * from './taxResourceVerification';

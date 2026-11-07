@@ -98,7 +98,7 @@ TINJAU SEBELUM MENYAMPAIKAN
 Periksa kebenaran fakta, kelengkapan bukti, dasar penjelasan, identitas dan kewenangan penandatangan, waktu serta saluran resmi. Minta bantuan profesional bila perlu. Simpan bukti penerimaan dan pantau tindak lanjut; tidak ada pengiriman otomatis dari aplikasi.
 
 RUJUKAN
-${SP2DK_SOURCES.map(s => `${s.title}\n${s.url}\nBagian: ${s.locator}\nBatasan: ${s.limitation}\nDitinjau: ${s.reviewedAt}`).join('\n\n')}
+${SP2DK_SOURCES.map(s => `${s.title}\n${s.url}\nBagian: ${s.locator}\nBatasan: ${s.limitation}\nTanggal kurasi: ${s.reviewedAt} — bukan persetujuan sumber untuk AI. Status kesiapan terbaru dapat dilihat di aplikasi.`).join('\n\n')}
 
 File ini memuat isian yang Anda masukkan. Simpan dan bagikan secara hati-hati.
 `;

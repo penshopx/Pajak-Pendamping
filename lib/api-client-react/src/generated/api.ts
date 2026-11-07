@@ -28,6 +28,7 @@ import type {
   ConsultationAnswer,
   ConsultationInput,
   HealthStatus,
+  Sp2dkReadiness,
   TaxResource
 } from './api.schemas';
 
@@ -57,6 +58,107 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetSp2dkReadinessUrl = () => {
+
+
+
+
+  return `/api/tax/sp2dk-readiness`
+}
+
+/**
+ * @summary Status publik kesiapan rujukan SP2DK untuk konsultasi
+ */
+export const getSp2dkReadiness = async ( options?: Parameters<typeof customFetch>[1]): Promise<Sp2dkReadiness> => {
+
+  return customFetch<Sp2dkReadiness>(getGetSp2dkReadinessUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSp2dkReadinessQueryKey = () => {
+    return [
+    `/api/tax/sp2dk-readiness`
+    ] as const;
+    }
+
+
+export const getGetSp2dkReadinessQueryOptions = <TData = Awaited<ReturnType<typeof getSp2dkReadiness>>, TError = ErrorType<void>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSp2dkReadiness>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSp2dkReadinessQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSp2dkReadiness>>> = ({ signal }) => getSp2dkReadiness({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSp2dkReadiness>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetSp2dkReadinessQueryResult = NonNullable<Awaited<ReturnType<typeof getSp2dkReadiness>>>
+export type GetSp2dkReadinessQueryError = ErrorType<void>
+
+
+export function useGetSp2dkReadiness<TData = Awaited<ReturnType<typeof getSp2dkReadiness>>, TError = ErrorType<void>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSp2dkReadiness>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSp2dkReadiness>>,
+          TError,
+          Awaited<ReturnType<typeof getSp2dkReadiness>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSp2dkReadiness<TData = Awaited<ReturnType<typeof getSp2dkReadiness>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSp2dkReadiness>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSp2dkReadiness>>,
+          TError,
+          Awaited<ReturnType<typeof getSp2dkReadiness>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSp2dkReadiness<TData = Awaited<ReturnType<typeof getSp2dkReadiness>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSp2dkReadiness>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Status publik kesiapan rujukan SP2DK untuk konsultasi
+ */
+
+export function useGetSp2dkReadiness<TData = Awaited<ReturnType<typeof getSp2dkReadiness>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSp2dkReadiness>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetSp2dkReadinessQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListTaxResourcesUrl = () => {
 

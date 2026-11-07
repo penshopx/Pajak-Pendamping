@@ -5,6 +5,31 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type PublicSourceReadinessStatus = typeof PublicSourceReadinessStatus[keyof typeof PublicSourceReadinessStatus];
+
+
+export const PublicSourceReadinessStatus = {
+  ready: 'ready',
+  not_checked: 'not_checked',
+  awaiting_review: 'awaiting_review',
+  access_failed: 'access_failed',
+  expired: 'expired',
+  needs_review: 'needs_review',
+  companion_held: 'companion_held',
+} as const;
+
+export interface PublicSourceReadiness {
+  id: string;
+  title: string;
+  status: PublicSourceReadinessStatus;
+}
+
+export interface Sp2dkReadiness {
+  ready: boolean;
+  evaluatedAt: string;
+  sources: PublicSourceReadiness[];
+}
+
 export type TaxResourceVerification = typeof TaxResourceVerification[keyof typeof TaxResourceVerification];
 
 

@@ -4,6 +4,7 @@ import { taxResources } from "./tax-resources";
 import { CHECK_INTERVAL, eligibleSources, resourceDigest, reviewStatus, sourceUrl } from "./tax-source-policy";
 import { fetchSource } from "./tax-source-fetch";
 import { logger } from "./logger";
+import { publicSp2dkReadiness } from "./tax-public-readiness";
 
 // A session lock serializes all scheduler replicas and operator decisions.
 export async function withMonitorLock<T>(work: () => Promise<T>): Promise<T | undefined> {
@@ -36,13 +37,17 @@ export async function monitoringState() {
       && o.id > reviewedObservation.id && (o.outcome !== "ok" || o.contentHash !== reviewedObservation.contentHash
         || o.linksHash !== reviewedObservation.linksHash || o.effectiveUrl !== reviewedObservation.effectiveUrl));
     return { resource, observation, review, reviewedObservation,
-      status: reviewStatus(resource, observation, review, reviewedObservation, Date.now(), invalidated) };
+      status: reviewStatus(resource, observation, review, reviewedObservation, Date.now(), invalidated) as ReturnType<typeof reviewStatus> };
   });
 }
 
 export async function consultationSources() {
   const state = await monitoringState();
   return eligibleSources(taxResources, new Set(state.filter(s => s.status === "approved").map(s => s.resource.id)));
+}
+
+export async function sp2dkReadiness() {
+  return publicSp2dkReadiness(await monitoringState());
 }
 
 export async function checkSources(force = false) {

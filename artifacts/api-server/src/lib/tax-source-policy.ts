@@ -44,7 +44,7 @@ export function inspectDocument(bytes: Uint8Array, url: string, contentType: str
 }
 
 export function reviewStatus(r: TaxResource, latest: TaxObservation | undefined, review: TaxReview | undefined,
-  reviewedObservation: TaxObservation | undefined, now = Date.now(), invalidated = false): string {
+  reviewedObservation: TaxObservation | undefined, now = Date.now(), invalidated = false) {
   if (!latest) return "Belum diperiksa otomatis";
   if (latest.outcome !== "ok") return "Sumber gagal diakses";
   if (now - latest.checkedAt.getTime() > MAX_CHECK_AGE) return "Pemeriksaan sumber kedaluwarsa";

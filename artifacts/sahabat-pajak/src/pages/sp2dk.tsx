@@ -5,6 +5,7 @@ import { downloadFile, usePageTitle } from '@/lib/format';
 import { SP2DK_AI_DRAFT_HREF, SP2DK_DRAFT_FIELDS, SP2DK_DRAFT_LIMIT, SP2DK_PRIVACY_NOTICE, SP2DK_SOURCES, SP2DK_STEPS, SP2DK_TIME_NOTES, buildSp2dkDraft, emptySp2dkDraft, type Sp2dkDraft } from '@/lib/sp2dk-guide';
 import { Notice, PageHeader } from '@/components/shell';
 import { Button } from '@/components/ui/button';
+import { Sp2dkReadiness } from '@/components/sp2dk-readiness';
 
 const DESC = 'Panduan edukatif menyiapkan fakta dan rujukan resmi sebelum menanggapi SP2DK: daftar periksa pribadi, kerangka netral yang dapat diunduh, dan batasan sumber. Tidak menghitung tenggat.';
 
@@ -73,6 +74,7 @@ export default function Sp2dk() {
         <Notice icon={Clock}>Batas waktu tidak disederhanakan menjadi satu rumus. Baca catatan waktu di bawah dan konfirmasikan kepada KPP sesegera mungkin.</Notice>
       </div>
 
+      <Sp2dkReadiness />
       <nav aria-label="Lompat ke bagian" className="mt-5 flex flex-wrap gap-2 text-sm">
         {[['#sp2dk-waktu', 'Catatan waktu'], ['#sp2dk-langkah', 'Langkah & centang'], ['#sp2dk-kerangka', 'Kerangka tanggapan'], ['#sp2dk-sumber', 'Sumber']].map(([h, l]) => (
           <a key={h} href={h} data-testid={`link-jump-${h.slice(7)}`} className="press rounded-full border border-input px-3.5 py-1.5 font-semibold text-foreground/90 hover:border-primary hover:text-white">{l}</a>))}
@@ -184,7 +186,7 @@ export default function Sp2dk() {
                 <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Jenis</dt><dd>{s.kind}</dd>
                 <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bagian</dt><dd className="break-words">{s.locator}</dd>
                 <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Batasan</dt><dd className="break-words">{s.limitation}</dd>
-                <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ditinjau</dt><dd className="num text-xs">{fmt(s.reviewedAt)}</dd>
+                <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tanggal kurasi</dt><dd className="num text-xs">{fmt(s.reviewedAt)} — bukan persetujuan sumber untuk AI.</dd>
               </dl>
             </details>
             <p className="mt-2 text-xs text-[hsl(var(--warn))]">Batasan: {s.limitation}</p>

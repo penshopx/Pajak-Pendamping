@@ -8,6 +8,7 @@ import { Notice, PageHeader } from '@/components/shell';
 import { Confirm } from '@/components/confirm';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Sp2dkReadiness } from '@/components/sp2dk-readiness';
 
 const SUGGESTED = [
   'Apa itu PPh Final 0,5% untuk UMKM dan siapa yang bisa memakainya?',
@@ -75,7 +76,9 @@ export default function Konsultasi() {
     taRef.current?.focus();
   }, [draftFromLink]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [chat.length, consult.isPending, error]);
+  useEffect(() => {
+    if (chat.length || consult.isPending || error) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [chat.length, consult.isPending, error]);
 
   const trimmed = q.trim();
   const valid = trimmed.length >= MIN && trimmed.length <= MAX;
@@ -113,6 +116,7 @@ export default function Konsultasi() {
           trigger={<Button variant="outline" className="press border-input" data-testid="button-clear-chat"><Eraser className="h-4 w-4 mr-1.5" />Hapus riwayat</Button>} /> : undefined} />
 
       <div className="mb-5"><Notice tone="warn" icon={LockKeyhole}>Pertanyaan dikirim ke layanan AI untuk diproses. Jangan kirim NPWP, NIK, kata sandi, OTP, atau data rahasia lain.</Notice></div>
+      <Sp2dkReadiness />
 
       <div className="flex-1 space-y-5" aria-live="polite">
         {chat.length === 0 && !consult.isPending && (
@@ -148,7 +152,7 @@ export default function Konsultasi() {
                         <span className="num grid h-6 w-6 shrink-0 place-items-center rounded bg-primary/20 text-xs font-bold text-accent">{i + 1}</span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-sm font-semibold leading-snug text-white group-hover:underline underline-offset-4">{s.title}</span>
-                          <span className="mt-0.5 block text-xs text-muted-foreground">{s.publisher} · dicek {formatDate(s.checkedAt)}</span>
+                          <span className="mt-0.5 block text-xs text-muted-foreground">{s.publisher} · kurasi {formatDate(s.checkedAt)}</span>
                           <span className="mt-1 block text-xs text-accent">{s.sourceType ?? s.category}{s.verification === 'directory' ? ' · hanya direktori' : s.verification === 'metadata' ? ' · hanya metadata' : ''}</span>
                           {s.locator && <span className="mt-1 block text-xs leading-relaxed text-foreground">{s.locator}</span>}
                           {s.version && <span className="mt-1 block text-xs text-muted-foreground">Versi: {s.version}</span>}
@@ -165,7 +169,7 @@ export default function Konsultasi() {
               </div>
             )}
             {m.disclaimer && <p className="mt-4 rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-foreground/80">{m.disclaimer}</p>}
-            {m.checkedAt && <p className="mt-2 text-[11px] text-muted-foreground">Sumber terakhir dicek {formatDate(m.checkedAt)}</p>}
+            {m.checkedAt && <p className="mt-2 text-[11px] text-muted-foreground">Tanggal kurasi rujukan {formatDate(m.checkedAt)} — bukan status kesiapan saat ini.</p>}
           </article>
         ))}
 

@@ -81,6 +81,12 @@ Baseline pemantauan baru tidak boleh disetujui otomatis hanya untuk mempertahank
 
 **How to apply:** Jangan mengisi persetujuan baseline lewat seed, migrasi, atau keputusan agen tanpa pembacaan dan keputusan peninjau yang nyata; sediakan antrean operator untuk persetujuan tersebut.
 
+Status kesiapan sumber untuk pengguna bukan notifikasi pengelola. Tanggal kurasi tidak menyatakan persetujuan sumber untuk konsultasi.
+
+**Why:** Pengguna meminta agar rujukan SP2DK yang ditahan dapat dipahami sebelum konsultasi, tanpa identitas peninjau atau catatan internal.
+
+**How to apply:** Saat memperluas informasi kesiapan ke topik lain, pisahkan informasi publik dari antrean operator dan tetap periksa kelayakan sumber di server saat memberikan jawaban.
+
 Progres persiapan SPT adalah pengakuan pengguna, bukan status pelaporan yang diverifikasi; BPE tetap diperiksa sendiri di portal resmi.
 
 **Why:** Pengguna meminta kemampuan melanjutkan persiapan tanpa menjadikan centang sebagai bukti SPT terkirim atau validasi DJP.

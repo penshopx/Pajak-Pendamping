@@ -11,6 +11,20 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /tax/sp2dk-readiness:
+    get:
+      operationId: getSp2dkReadiness
+      tags: [tax]
+      summary: Status publik kesiapan rujukan SP2DK untuk konsultasi
+      responses:
+        "200":
+          description: Current eligibility, not legal assurance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sp2dkReadiness"
+        "503":
+          description: Status cannot currently be checked
   /tax/resources:
     get:
       operationId: listTaxResources
@@ -64,6 +78,25 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    Sp2dkReadiness:
+      type: object
+      required: [ready, evaluatedAt, sources]
+      properties:
+        ready: { type: boolean }
+        evaluatedAt: { type: string }
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicSourceReadiness"
+    PublicSourceReadiness:
+      type: object
+      required: [id, title, status]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        status:
+          type: string
+          enum: [ready, not_checked, awaiting_review, access_failed, expired, needs_review, companion_held]
     TaxResource:
       type: object
       required: [id, title, category, description, url, publisher, sourceType, checkedAt, excerpt]
