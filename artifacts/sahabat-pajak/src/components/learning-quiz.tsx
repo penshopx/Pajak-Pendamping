@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,15 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
     undefined, emptyQuizAttempt,
   );
   const form = useForm<{ answer: string }>({ defaultValues: { answer: '' } });
+  const wasSubmitted = useRef(false);
+  const { setFocus } = form;
+  useEffect(() => {
+    // Wait until React has re-enabled the fieldset before restoring radio focus.
+    if (wasSubmitted.current && !attempt.submitted) setFocus('answer');
+    wasSubmitted.current = attempt.submitted;
+  }, [attempt.submitted, setFocus]);
   const feedback = quizFeedback(question, attempt);
+  const errorId = `quiz-error-${question.id}`;
   return (
     <div id={`soal-${question.id}`} tabIndex={-1} className="scroll-mt-24 rounded-xl border border-border bg-background/50 p-4" data-testid={`quiz-question-${question.id}`}>
       <Form {...form}>
@@ -22,31 +30,37 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
           dispatch({ type: 'submit' });
           onAttemptChange?.(question, updateQuizAttempt(question, { selectedId: answer, submitted: false }, { type: 'submit' }));
         })}>
-          <fieldset disabled={attempt.submitted}>
-            <legend className="font-semibold leading-relaxed text-white">{question.prompt}</legend>
+          <fieldset disabled={attempt.submitted} className="min-w-0">
+            <legend className="w-full break-words font-semibold leading-relaxed text-white">{question.prompt}</legend>
             <div className="mt-3 space-y-2">
               {question.options.map(option => (
-                <label key={option.id} className="flex cursor-pointer items-start gap-3 rounded-lg border border-input p-3 text-sm leading-relaxed text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-lg border border-input p-3 text-sm leading-relaxed text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
                   <input type="radio" value={option.id} className="mt-1 shrink-0 accent-[hsl(var(--primary))]"
+                    aria-invalid={!!form.formState.errors.answer}
+                    aria-describedby={form.formState.errors.answer ? errorId : undefined}
                     data-testid={`input-quiz-${question.id}-${option.id}`}
                     {...form.register('answer', { required: 'Pilih satu jawaban terlebih dahulu.' })} />
-                  {option.label}
+                  <span className="min-w-0 break-words">{option.label}</span>
                 </label>
               ))}
             </div>
           </fieldset>
-          {form.formState.errors.answer && <p role="alert" className="mt-2 text-sm text-accent" data-testid={`quiz-error-${question.id}`}>{form.formState.errors.answer.message}</p>}
+          {form.formState.errors.answer && <p id={errorId} role="alert" className="mt-2 text-sm text-accent" data-testid={errorId}>{form.formState.errors.answer.message}</p>}
           {!feedback && <Button type="submit" className="mt-3" data-testid={`button-check-quiz-${question.id}`}>Periksa jawaban</Button>}
         </form>
       </Form>
-      {feedback && (
-        <div className="mt-4 border-t border-border pt-4">
-          <div role="status" aria-live="polite" data-testid={`quiz-feedback-${question.id}`}>
+      <div role="status" aria-live="polite" aria-atomic="true">
+        {feedback && (
+          <div className="mt-4 border-t border-border pt-4" data-testid={`quiz-feedback-${question.id}`}>
             <p className="font-semibold text-accent">{feedback.correct ? 'Tepat untuk skenario ini.' : 'Masih ada konsep yang tertukar.'}</p>
             <p className="mt-2 text-sm leading-relaxed">{feedback.reason}</p>
             <p className="mt-2 text-sm"><b>Jawaban yang sesuai:</b> {feedback.correctLabel}</p>
             <p className="mt-2 text-sm leading-relaxed">{feedback.explanation}</p>
           </div>
+        )}
+      </div>
+      {feedback && (
+        <div>
           <p className="mt-3 text-xs font-semibold text-accent">
             {question.basis === 'app' ? 'Tentang cara kerja aplikasi — bukan pernyataan DJP atau penetapan pajak.' : 'Rujukan istilah resmi — diperiksa 6 November 2026, bukan verifikasi kondisi Anda.'}
           </p>
@@ -78,7 +92,7 @@ export function LearningQuiz({ stepId, onAttemptChange }: { stepId: string; onAt
   if (!questions.length) return null;
   return (
     <details className="mt-6 rounded-xl border border-primary/35 bg-primary/5 p-4" data-testid={`quiz-section-${stepId}`}>
-      <summary className="cursor-pointer font-semibold text-primary" data-testid={`toggle-quiz-${stepId}`}>Uji pemahaman (opsional) · {questions.length} soal singkat</summary>
+      <summary className="cursor-pointer rounded-sm font-semibold text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" data-testid={`toggle-quiz-${stepId}`}>Uji pemahaman (opsional) · {questions.length} soal singkat</summary>
       <p className="mt-3 text-sm leading-relaxed text-foreground/90">
         Soal dan pembahasan tetap, bukan penilaian AI. Tidak ada sertifikat atau klaim lulus kepatuhan.
         Jawaban tidak disimpan dan tidak dikirim ke layanan luar. Pilihan serta hasil hilang saat meninggalkan atau memuat ulang halaman.
