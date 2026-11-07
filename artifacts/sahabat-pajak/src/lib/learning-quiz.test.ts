@@ -136,7 +136,7 @@ test('quiz UI wires each question, validation, feedback and retry without store 
       assert.ok(html.includes(`quiz-question-${q.id}`));
       assert.ok(html.includes(`button-check-quiz-${q.id}`));
       for (const option of q.options) assert.ok(html.includes(`input-quiz-${q.id}-${option.id}`));
-      assert.ok(!html.includes(`quiz-feedback-${q.id}`));
+      assert.ok(!html.includes(`data-testid="quiz-feedback-${q.id}"`), 'the live-region shell exists, but no feedback is shown before submission');
     }
     assert.match(html, /bukan penilaian AI/);
     assert.match(html, /Tidak ada sertifikat/);
@@ -150,6 +150,30 @@ test('quiz UI wires each question, validation, feedback and retry without store 
   assert.match(ui, /form\.reset\(\{ answer: '' \}\)/);
   assert.match(ui, /form\.handleSubmit/);
   assert.match(ui, /disabled=\{attempt\.submitted\}/);
+});
+
+test('native quiz semantics keep feedback references valid and the check control mounted', () => {
+  for (const step of LEARNING_STEPS) {
+    const html = renderToString(React.createElement(LearningQuiz, { stepId: step.id }));
+    for (const q of QUIZ_QUESTIONS.filter(q => q.stepId === step.id)) {
+      assert.ok(html.includes(`<div id="quiz-feedback-${q.id}" role="status" aria-live="polite" aria-atomic="true">`));
+      assert.ok(html.includes('aria-disabled="false"'));
+      assert.ok(html.includes(`<legend class=`));
+      assert.ok(html.includes('type="radio"'));
+      assert.ok(!html.includes('role="radiogroup"'), 'fieldset and legend supply the native group name');
+    }
+  }
+  const ui = readFileSync('artifacts/sahabat-pajak/src/components/learning-quiz.tsx', 'utf8');
+  assert.doesNotMatch(ui, /!feedback && <Button/);
+  assert.match(ui, /type=\{feedback \? 'button' : 'submit'\}/);
+  assert.match(ui, /aria-disabled=\{!!feedback\}/);
+  assert.match(ui, /tabIndex=\{feedback \? -1 : undefined\}/);
+  assert.match(ui, /aria-describedby=\{feedback \? feedbackId : undefined\}/);
+  assert.match(ui, /form\.formState\.errors\.answer \? errorId : feedback \? feedbackId : undefined/);
+  assert.match(ui, /wasSubmitted\.current && !attempt\.submitted/);
+  assert.match(ui, /!wasSubmitted\.current && attempt\.submitted/);
+  assert.match(ui, /checkButtonRef\.current\?\.focus\(\)/);
+  assert.match(ui, /setFocus\('answer'\)/);
 });
 
 test('review keeps only the latest outcome per question, and retry changes no other entry', () => {

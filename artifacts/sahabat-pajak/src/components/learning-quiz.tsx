@@ -14,14 +14,18 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
   );
   const form = useForm<{ answer: string }>({ defaultValues: { answer: '' } });
   const wasSubmitted = useRef(false);
+  const checkButtonRef = useRef<HTMLButtonElement>(null);
   const { setFocus } = form;
   useEffect(() => {
+    // Implicit Enter submission may start on a radio that has just become disabled.
+    if (!wasSubmitted.current && attempt.submitted) checkButtonRef.current?.focus();
     // Wait until React has re-enabled the fieldset before restoring radio focus.
     if (wasSubmitted.current && !attempt.submitted) setFocus('answer');
     wasSubmitted.current = attempt.submitted;
   }, [attempt.submitted, setFocus]);
   const feedback = quizFeedback(question, attempt);
   const errorId = `quiz-error-${question.id}`;
+  const feedbackId = `quiz-feedback-${question.id}`;
   return (
     <div id={`soal-${question.id}`} tabIndex={-1} className="scroll-mt-24 rounded-xl border border-border bg-background/50 p-4" data-testid={`quiz-question-${question.id}`}>
       <Form {...form}>
@@ -30,14 +34,14 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
           dispatch({ type: 'submit' });
           onAttemptChange?.(question, updateQuizAttempt(question, { selectedId: answer, submitted: false }, { type: 'submit' }));
         })}>
-          <fieldset disabled={attempt.submitted} className="min-w-0">
+          <fieldset disabled={attempt.submitted} aria-describedby={feedback ? feedbackId : undefined} className="min-w-0">
             <legend className="w-full break-words font-semibold leading-relaxed text-white">{question.prompt}</legend>
             <div className="mt-3 space-y-2">
               {question.options.map(option => (
                 <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-lg border border-input p-3 text-sm leading-relaxed text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
                   <input type="radio" value={option.id} className="mt-1 shrink-0 accent-[hsl(var(--primary))]"
                     aria-invalid={!!form.formState.errors.answer}
-                    aria-describedby={form.formState.errors.answer ? errorId : undefined}
+                    aria-describedby={form.formState.errors.answer ? errorId : feedback ? feedbackId : undefined}
                     data-testid={`input-quiz-${question.id}-${option.id}`}
                     {...form.register('answer', { required: 'Pilih satu jawaban terlebih dahulu.' })} />
                   <span className="min-w-0 break-words">{option.label}</span>
@@ -46,10 +50,17 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
             </div>
           </fieldset>
           {form.formState.errors.answer && <p id={errorId} role="alert" className="mt-2 text-sm text-accent" data-testid={errorId}>{form.formState.errors.answer.message}</p>}
-          {!feedback && <Button type="submit" className="mt-3" data-testid={`button-check-quiz-${question.id}`}>Periksa jawaban</Button>}
+          {/* Keep this DOM node so checking an answer never removes the focused button.
+              Once checked, it has no action and leaves the subsequent tab order. */}
+          <Button ref={checkButtonRef} type={feedback ? 'button' : 'submit'} aria-disabled={!!feedback}
+            tabIndex={feedback ? -1 : undefined}
+            className="mt-3 aria-disabled:cursor-default aria-disabled:opacity-60"
+            data-testid={`button-check-quiz-${question.id}`}>
+            {feedback ? 'Jawaban sudah diperiksa' : 'Periksa jawaban'}
+          </Button>
         </form>
       </Form>
-      <div role="status" aria-live="polite" aria-atomic="true">
+      <div id={feedbackId} role="status" aria-live="polite" aria-atomic="true">
         {feedback && (
           <div className="mt-4 border-t border-border pt-4" data-testid={`quiz-feedback-${question.id}`}>
             <p className="font-semibold text-accent">{feedback.correct ? 'Tepat untuk skenario ini.' : 'Masih ada konsep yang tertukar.'}</p>
