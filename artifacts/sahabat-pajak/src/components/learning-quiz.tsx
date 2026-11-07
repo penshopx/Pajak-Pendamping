@@ -27,7 +27,7 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
   const errorId = `quiz-error-${question.id}`;
   const feedbackId = `quiz-feedback-${question.id}`;
   return (
-    <div id={`soal-${question.id}`} tabIndex={-1} className="scroll-mt-24 rounded-xl border border-border bg-background/50 p-4" data-testid={`quiz-question-${question.id}`}>
+    <div id={`soal-${question.id}`} tabIndex={-1} className="learning-question scroll-mt-24 rounded-xl border border-border bg-background/50 p-4" data-testid={`quiz-question-${question.id}`}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(({ answer }) => {
           dispatch({ type: 'select', optionId: answer });
@@ -38,7 +38,7 @@ function Question({ question, onAttemptChange }: { question: QuizQuestion; onAtt
             <legend className="w-full break-words font-semibold leading-relaxed text-white">{question.prompt}</legend>
             <div className="mt-3 space-y-2">
               {question.options.map(option => (
-                <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-lg border border-input p-3 text-sm leading-relaxed text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
+                <label key={option.id} className="learning-option flex min-w-0 cursor-pointer items-start gap-3 rounded-lg border border-input p-3 text-sm leading-relaxed text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
                   <input type="radio" value={option.id} className="mt-1 shrink-0 accent-[hsl(var(--primary))]"
                     aria-invalid={!!form.formState.errors.answer}
                     aria-describedby={form.formState.errors.answer ? errorId : feedback ? feedbackId : undefined}
@@ -102,7 +102,7 @@ export function LearningQuiz({ stepId, onAttemptChange }: { stepId: string; onAt
   const questions = QUIZ_QUESTIONS.filter(question => question.stepId === stepId);
   if (!questions.length) return null;
   return (
-    <details className="mt-6 rounded-xl border border-primary/35 bg-primary/5 p-4" data-testid={`quiz-section-${stepId}`}>
+    <details className="learning-quiz mt-6 rounded-xl border border-primary/35 bg-primary/5 p-4" data-testid={`quiz-section-${stepId}`}>
       <summary className="cursor-pointer rounded-sm font-semibold text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" data-testid={`toggle-quiz-${stepId}`}>Uji pemahaman (opsional) · {questions.length} soal singkat</summary>
       <p className="mt-3 text-sm leading-relaxed text-foreground/90">
         Soal dan pembahasan tetap, bukan penilaian AI. Tidak ada sertifikat atau klaim lulus kepatuhan.

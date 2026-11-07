@@ -15,6 +15,12 @@ Pengguna memilih tautan penawaran template pajak komersial sebagai “Referensi 
 
 **How to apply:** Gunakan untuk mengusulkan fungsi yang relevan bagi Sahabat Pajak. Verifikasi aturan dan rumus dari sumber resmi sebelum menerapkan perhitungan.
 
+Pengguna meminta mengadopsi fitur-fitur Gustafta yang relevan dan menyesuaikannya dengan kekhususan Sahabat Pajak.
+
+**Why:** Permintaan eksplisit pengguna untuk adaptasi fitur, bukan menyalin seluruh menu konstruksi.
+
+**How to apply:** Jadikan Gustafta referensi pola ruang kerja, konsultasi, dokumen, dan alat bantu. Tetap gunakan konteks UMKM/perpajakan dan batas layanan Sahabat Pajak; materi promosi Gustafta bukan sumber hukum pajak atau bukti integrasi aplikasi.
+
 Peta belajar UMKM menghubungkan materi pengantar dengan panduan dan pustaka yang sudah ada; progresnya adalah penanda belajar mandiri, bukan status kepatuhan.
 
 **Why:** Pengguna memilih peta belajar setelah meninjau referensi seminar, spreadsheet fiskal, dan AI komersial. Pilihan itu bukan permintaan mengubah rekap kas menjadi mesin pajak atau mengesahkan pemahaman pengguna.

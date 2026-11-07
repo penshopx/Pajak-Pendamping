@@ -1,0 +1,49 @@
+/* Keep enlarged text readable instead of spending the narrow viewport on
+   several nested rem-based paddings. Do not shrink fonts or hide overflow. */
+@media (max-width: 480px) {
+  .learning-page {
+    overflow-wrap: anywhere;
+  }
+
+  .learning-page > section,
+  .learning-page .learning-stage {
+    min-width: 0;
+    padding-inline: 12px;
+  }
+
+  .learning-page .learning-quiz,
+  .learning-page .learning-question,
+  .learning-page .learning-option,
+  .learning-page [role='note'] {
+    min-width: 0;
+    padding-inline: 8px;
+  }
+
+  .learning-page .learning-stage > header > div {
+    min-width: 0;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .learning-page .learning-option {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .learning-page [role='note'] {
+    gap: 8px;
+  }
+
+  .learning-page button {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .learning-page a {
+    min-width: 0;
+    max-width: 100%;
+  }
+}

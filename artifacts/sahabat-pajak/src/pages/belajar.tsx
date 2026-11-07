@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { LearningQuiz, type QuizAttemptChange } from '@/components/learning-quiz';
 import { LearningQuizReview } from '@/components/learning-quiz-review';
 import { updateQuizReview, type QuizReview } from '@/lib/learning-quiz';
+import '@/styles/learning.css';
 
 const DESC = 'Peta belajar pajak UMKM: enam tahap mandiri untuk memahami apa yang perlu diperiksa dan dipraktikkan. Progres hanya catatan belajar, bukan pemenuhan kewajiban pajak.';
 
@@ -47,7 +48,7 @@ function StepCard({ step, index, done, onToggle, error, onAttemptChange }: { ste
   const actions = step.actions.filter(a => a.href !== step.library.href);
   return (
     <article id={`tahap-${step.id}`} aria-labelledby={`judul-${step.id}`} data-testid={`card-step-${step.id}`}
-      className={`rise scroll-mt-24 rounded-2xl border bg-card p-5 sm:p-7 ${done ? 'border-[hsl(var(--success)/.45)]' : 'border-border'}`}>
+      className={`learning-stage rise scroll-mt-24 rounded-2xl border bg-card p-5 sm:p-7 ${done ? 'border-[hsl(var(--success)/.45)]' : 'border-border'}`}>
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex gap-4">
           <span className={`num grid h-10 w-10 shrink-0 place-items-center rounded-xl text-sm font-bold ${done ? 'bg-[hsl(var(--success)/.15)] text-[hsl(var(--success))]' : 'bg-primary/15 text-primary'}`}>
@@ -131,7 +132,7 @@ export default function Belajar() {
   };
 
   return (
-    <>
+    <div className="learning-page min-w-0">
       <PageHeader eyebrow="Belajar" title="Peta belajar pajak UMKM"
         desc="Enam tahap mandiri untuk mengenali apa yang perlu diperiksa dan dipraktikkan. Buka tahap mana pun sesuai kebutuhan; urutan hanya saran."
         actions={done > 0 ? <Confirm title="Atur ulang progres belajar?" confirmLabel="Atur ulang progres"
@@ -195,6 +196,6 @@ export default function Belajar() {
           <StepCard step={s} index={i} done={learningCompleted.includes(s.id)} onToggle={() => toggle(s)} error={errors[s.id] ?? null} onAttemptChange={onAttemptChange} />
         </li>)}
       </ol>
-    </>
+    </div>
   );
 }
