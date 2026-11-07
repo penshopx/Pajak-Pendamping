@@ -1,0 +1,21 @@
+.tnav { position: relative; min-width: 0; overflow-wrap: anywhere; border: 1px solid hsl(var(--primary) / .45); background: linear-gradient(160deg, hsl(var(--primary) / .1), hsl(var(--card)) 45%); }
+.tnav-field { display: flex; align-items: stretch; gap: .5rem; flex-wrap: wrap; }
+.tnav-input { flex: 1 1 14rem; min-width: 0; min-height: 2.75rem; border-radius: .75rem; border: 1px solid hsl(var(--input)); background: hsl(var(--background)); color: hsl(var(--foreground)); padding: .6rem .85rem; font-size: 1rem; }
+.tnav-input::placeholder { color: hsl(var(--muted-foreground)); }
+.tnav-input:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-color: hsl(var(--primary)); }
+.tnav-input[aria-invalid='true'] { border-color: hsl(var(--destructive)); }
+.tnav-chip { border: 1px solid hsl(var(--input)); border-radius: 999px; padding: .35rem .8rem; font-size: .8125rem; font-weight: 600; color: hsl(var(--foreground)); background: hsl(var(--secondary)); transition: border-color .2s ease, background-color .2s ease; max-width: 100%; white-space: normal; text-align: left; }
+.tnav-chip:hover, .tnav-chip[aria-pressed='true'] { border-color: hsl(var(--primary)); background: hsl(var(--primary) / .16); }
+.tnav-clear { min-height: 2.75rem; border-radius: .75rem; border: 1px solid hsl(var(--input)); padding: 0 1rem; font-weight: 600; color: hsl(var(--foreground)); display: inline-flex; align-items: center; gap: .4rem; }
+.tnav-clear:hover:not(:disabled) { border-color: hsl(var(--primary)); }
+.tnav-clear:disabled { opacity: .5; cursor: not-allowed; }
+.tnav-result { border: 1px solid hsl(var(--border)); border-left: 3px solid hsl(var(--primary)); border-radius: .9rem; background: hsl(var(--background) / .6); padding: 1rem; min-width: 0; }
+.tnav-term { font-family: var(--app-font-mono); font-size: .75rem; color: hsl(var(--ice)); border: 1px solid hsl(var(--accent) / .4); border-radius: .4rem; padding: .05rem .4rem; }
+.tnav-results { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+@media (prefers-reduced-motion: reduce) { .tnav-chip { transition: none; } }
+@media (max-width: 480px) {
+  .tnav { padding-inline: 12px; }
+  .tnav > div:first-child { flex-direction: column; gap: 8px; }
+  .tnav-result { padding: 12px; }
+  .tnav-clear { flex: 1 1 auto; justify-content: center; }
+}

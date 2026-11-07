@@ -13,8 +13,9 @@ import {
   type ServiceRoom, type ServiceTopicId, type RoomStepId,
 } from '@/lib/service-center';
 import '@/styles/service-center.css';
+import TaxNavigator from '@/components/tax-navigator';
 
-const DESC = 'Pusat Layanan Sahabat Pajak: konsultasi per topik dan ruang persiapan per periode yang tersimpan di peramban Anda. Bukan konfirmasi kepatuhan.';
+const DESC = 'Pusat Layanan Sahabat Pajak: navigator kebutuhan ke fitur yang ada, konsultasi per topik dan ruang persiapan per periode yang tersimpan di peramban Anda. Bukan konfirmasi kepatuhan.';
 const STEP_LABEL: Record<RoomStepId, string> = { pahami: 'Pahami', siapkan: 'Siapkan', tinjau: 'Tinjau', lanjutkan: 'Lanjutkan' };
 const PERIOD_RE = /^(19\d{2}|20\d{2}|2100)(-(0[1-9]|1[0-2]))?$/;
 const msg = (e: unknown) => e instanceof Error ? e.message : 'Perubahan gagal disimpan.';
@@ -171,6 +172,8 @@ export default function Layanan() {
         actions={<Button className="press font-semibold" onClick={() => startNew()} data-testid="button-new-room"><Plus className="mr-1.5 h-4 w-4" />Ruang baru</Button>} />
 
       <Notice icon={ShieldAlert}>Konsultasi hanya menjawab dari sumber yang tersedia dan dapat menahan jawaban bila sumber belum cukup. Tautan konsultasi membuka draf yang bisa Anda sunting; tidak terkirim otomatis dan tidak memuat isi ruang Anda.</Notice>
+
+      <TaxNavigator />
 
       <section className="mt-8" aria-labelledby="h-topics">
         <h2 id="h-topics" className="text-xl font-bold text-white">Topik konsultasi</h2>

@@ -27,6 +27,12 @@ Tahap adopsi yang dipilih pengguna adalah “Pusat layanan terpadu”: konsultas
 
 **How to apply:** Ruang persiapan mengelompokkan langkah umum pengguna dan bukan bukti kepatuhan. Ruang topik SP2DK tidak memperluas izin penyimpanan isi surat atau kerangka tanggapan; isian kerangka pada panduan SP2DK tetap terpisah dan hanya untuk sesi itu.
 
+Pengguna memilih “Navigator kebutuhan pajak” sebagai adaptasi lanjutan katalog Gustafta: membantu menemukan fitur yang sudah tersedia berdasarkan pekerjaan yang ingin diselesaikan.
+
+**Why:** Pilihan eksplisit pengguna atas rekomendasi navigator, bukan katalog besar berisi layanan yang belum tersedia. Teks kebutuhan bebas juga dapat memuat informasi sensitif yang tidak diperlukan untuk memilih tautan fitur.
+
+**How to apply:** Pertahankan pencarian lokal dan sementara, tanpa meneruskan teks ke AI atau URL tujuan. Pencocokan kata kunci bukan penetapan kewajiban. Peralihan ke analisis kasus atau pengiriman teks memerlukan penetapan cakupan dan batas privasi baru.
+
 Peta belajar UMKM menghubungkan materi pengantar dengan panduan dan pustaka yang sudah ada; progresnya adalah penanda belajar mandiri, bukan status kepatuhan.
 
 **Why:** Pengguna memilih peta belajar setelah meninjau referensi seminar, spreadsheet fiskal, dan AI komersial. Pilihan itu bukan permintaan mengubah rekap kas menjadi mesin pajak atau mengesahkan pemahaman pengguna.
