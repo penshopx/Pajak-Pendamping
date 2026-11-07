@@ -135,3 +135,22 @@ export function quizFeedback(question: QuizQuestion, attempt: QuizAttempt) {
   if (!selected || !correct) throw new Error('Pemetaan jawaban latihan tidak valid.');
   return { correct: selected.id === correct.id, reason: selected.reason, correctLabel: correct.label, explanation: question.explanation };
 }
+
+/** Only the current visit's latest checked outcome, never an answer history. */
+export type QuizReview = Partial<Record<string, boolean>>;
+export const QUIZ_CONCEPTS: Record<string, string> = {
+  modal: 'Setoran modal dan pendapatan penjualan',
+  'tautkan-piutang': 'Penautan pembayaran piutang tanpa kas masuk ganda',
+  'tautkan-utang': 'Penautan pembayaran utang tanpa kas keluar ganda',
+  billing: 'Kode billing berbeda dari bukti pembayaran dan pelaporan',
+  'bukti-bayar': 'BPN dan NTPN sebagai bukti pembayaran, bukan kode billing',
+  bpe: 'BPE sebagai bukti penerimaan pelaporan SPT',
+};
+
+export function updateQuizReview(review: QuizReview, question: QuizQuestion, attempt: QuizAttempt): QuizReview {
+  const next = { ...review };
+  const feedback = quizFeedback(question, attempt);
+  if (feedback) next[question.id] = feedback.correct;
+  else delete next[question.id];
+  return next;
+}

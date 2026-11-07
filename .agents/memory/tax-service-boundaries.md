@@ -27,6 +27,12 @@ Latihan pemahaman tidak perlu menyimpan riwayat atau nilai secara permanen; pert
 
 **How to apply:** Jelaskan bahwa hasil hilang saat keluar atau memuat ulang. Jika penyimpanan diminta kemudian, rancang pemisahan, kegagalan simpan, dan reset secara eksplisit; jangan memasukkannya diam-diam ke progres belajar atau SPT.
 
+Ringkasan konsep latihan dibatasi pada kunjungan halaman Belajar yang sama; jangan mengirim analitik jawaban atau mengubah tanda belajar dan progres SPT.
+
+**Why:** Pengguna secara eksplisit meminta ringkasan sementara tanpa riwayat jawaban, nilai kelulusan, atau klaim kepatuhan.
+
+**How to apply:** Pertahankan soal dan pembahasan tetap; pengulangan hanya memperbarui ringkasan soal terkait, bukan mereset soal lain.
+
 Referensi konsultan pajak dan PJAP digunakan untuk pustaka dan konsultasi AI, bukan untuk video atau klaim status profesi aplikasi.
 
 **Why:** Pengguna secara eksplisit memilih “Tambahkan ke pustaka dan AI” untuk referensi tambahan tersebut.

@@ -3,9 +3,11 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { emptyQuizAttempt, QUIZ_QUESTIONS, QUIZ_SOURCES, quizFeedback, updateQuizAttempt, type QuizQuestion } from '@/lib/learning-quiz';
+import { emptyQuizAttempt, QUIZ_QUESTIONS, QUIZ_SOURCES, quizFeedback, updateQuizAttempt, type QuizAttempt, type QuizQuestion } from '@/lib/learning-quiz';
 
-function Question({ question }: { question: QuizQuestion }) {
+export type QuizAttemptChange = (question: QuizQuestion, attempt: QuizAttempt) => void;
+
+function Question({ question, onAttemptChange }: { question: QuizQuestion; onAttemptChange?: QuizAttemptChange }) {
   const [attempt, dispatch] = useReducer(
     (state: ReturnType<typeof emptyQuizAttempt>, action: Parameters<typeof updateQuizAttempt>[2]) => updateQuizAttempt(question, state, action),
     undefined, emptyQuizAttempt,
@@ -13,11 +15,12 @@ function Question({ question }: { question: QuizQuestion }) {
   const form = useForm<{ answer: string }>({ defaultValues: { answer: '' } });
   const feedback = quizFeedback(question, attempt);
   return (
-    <div className="rounded-xl border border-border bg-background/50 p-4" data-testid={`quiz-question-${question.id}`}>
+    <div id={`soal-${question.id}`} tabIndex={-1} className="scroll-mt-24 rounded-xl border border-border bg-background/50 p-4" data-testid={`quiz-question-${question.id}`}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(({ answer }) => {
           dispatch({ type: 'select', optionId: answer });
           dispatch({ type: 'submit' });
+          onAttemptChange?.(question, updateQuizAttempt(question, { selectedId: answer, submitted: false }, { type: 'submit' }));
         })}>
           <fieldset disabled={attempt.submitted}>
             <legend className="font-semibold leading-relaxed text-white">{question.prompt}</legend>
@@ -59,6 +62,7 @@ function Question({ question }: { question: QuizQuestion }) {
             <Button type="button" variant="outline" data-testid={`button-retry-quiz-${question.id}`} onClick={() => {
               dispatch({ type: 'retry' });
               form.reset({ answer: '' });
+              onAttemptChange?.(question, emptyQuizAttempt());
             }}>Coba lagi</Button>
             <Link href={question.guide.href} data-testid={`link-quiz-guide-${question.id}`} className="text-sm font-semibold text-primary underline underline-offset-4">{question.guide.label}</Link>
           </div>
@@ -69,7 +73,7 @@ function Question({ question }: { question: QuizQuestion }) {
   );
 }
 
-export function LearningQuiz({ stepId }: { stepId: string }) {
+export function LearningQuiz({ stepId, onAttemptChange }: { stepId: string; onAttemptChange?: QuizAttemptChange }) {
   const questions = QUIZ_QUESTIONS.filter(question => question.stepId === stepId);
   if (!questions.length) return null;
   return (
@@ -81,7 +85,7 @@ export function LearningQuiz({ stepId }: { stepId: string }) {
         Latihan tidak mengubah tanda belajar, transaksi, pembayaran, ataupun progres SPT; semua tahap tetap dapat dibuka.
       </p>
       <div className="mt-4 space-y-4">
-        {questions.map(question => <Question key={question.id} question={question} />)}
+        {questions.map(question => <Question key={question.id} question={question} onAttemptChange={onAttemptChange} />)}
       </div>
     </details>
   );

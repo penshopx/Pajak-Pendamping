@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
+import { Router } from 'wouter';
 import { LEARNING_STEPS } from './learning-path';
-import { QUIZ_QUESTIONS, QUIZ_SOURCES, emptyQuizAttempt, updateQuizAttempt, quizFeedback } from './learning-quiz';
+import { QUIZ_CONCEPTS, QUIZ_QUESTIONS, QUIZ_SOURCES, emptyQuizAttempt, updateQuizAttempt, quizFeedback, updateQuizReview, type QuizReview } from './learning-quiz';
 import { LearningQuiz } from '../components/learning-quiz';
+import { LearningQuizReview } from '../components/learning-quiz-review';
 import { StoreProvider, useStore } from './store';
 
 const expected = {
@@ -106,15 +108,19 @@ test('render, all answers and retries leave the actual local store and SPT progr
   assert.equal(store.storageError, null);
   assert.deepEqual(store.transactions, snapshot.transactions);
   assert.deepEqual(store.sptProgress, snapshot.sptProgress);
+  let review: QuizReview = {};
   for (const q of QUIZ_QUESTIONS) {
     let attempt = emptyQuizAttempt();
     for (const o of q.options) {
       attempt = updateQuizAttempt(q, attempt, { type: 'select', optionId: o.id });
       attempt = updateQuizAttempt(q, attempt, { type: 'submit' });
       assert.ok(quizFeedback(q, attempt));
+      review = updateQuizReview(review, q, attempt);
       attempt = updateQuizAttempt(q, attempt, { type: 'retry' });
+      review = updateQuizReview(review, q, attempt);
     }
   }
+  assert.deepEqual(review, {});
   assert.equal(writes, 0);
   for (const key of ['transactions', 'tradeBills', 'payments', 'obligations', 'learningCompleted', 'sptProgress'] as const) assert.deepEqual(store[key], snapshot[key]);
   assert.match(html, /tidak disimpan dan tidak dikirim/);
@@ -135,7 +141,7 @@ test('quiz UI wires each question, validation, feedback and retry without store 
     assert.match(html, /bukan penilaian AI/);
     assert.match(html, /Tidak ada sertifikat/);
   }
-  for (const file of ['src/lib/learning-quiz.ts', 'src/components/learning-quiz.tsx']) {
+  for (const file of ['src/lib/learning-quiz.ts', 'src/components/learning-quiz.tsx', 'src/components/learning-quiz-review.tsx']) {
     const code = readFileSync(`artifacts/sahabat-pajak/${file}`, 'utf8');
     assert.doesNotMatch(code, /useStore|localStorage|sessionStorage|fetch\(|sendBeacon|api-client|setLearningComplete|setSptChecked/);
   }
@@ -144,4 +150,54 @@ test('quiz UI wires each question, validation, feedback and retry without store 
   assert.match(ui, /form\.reset\(\{ answer: '' \}\)/);
   assert.match(ui, /form\.handleSubmit/);
   assert.match(ui, /disabled=\{attempt\.submitted\}/);
+});
+
+test('review keeps only the latest outcome per question, and retry changes no other entry', () => {
+  let review: QuizReview = Object.freeze({});
+  for (const q of QUIZ_QUESTIONS) {
+    assert.ok(QUIZ_CONCEPTS[q.id]?.length);
+    const wrong = q.options.find(o => o.id !== q.correctId)!;
+    const before = review;
+    review = updateQuizReview(review, q, { selectedId: wrong.id, submitted: true });
+    assert.deepEqual(review, { ...before, [q.id]: false });
+    assert.equal(before[q.id], undefined);
+  }
+  for (const q of QUIZ_QUESTIONS) {
+    const before = Object.freeze({ ...review });
+    const { [q.id]: _, ...others } = before;
+    const retry = updateQuizReview(before, q, emptyQuizAttempt());
+    assert.deepEqual(retry, others);
+    assert.deepEqual(updateQuizReview(retry, q, { selectedId: q.correctId, submitted: false }), others);
+    review = updateQuizReview(retry, q, { selectedId: q.correctId, submitted: true });
+    assert.deepEqual(review, { ...others, [q.id]: true });
+    const wrong = q.options.find(o => o.id !== q.correctId)!;
+    assert.deepEqual(updateQuizReview(review, q, { selectedId: wrong.id, submitted: true }), { ...others, [q.id]: false });
+  }
+  assert.ok(QUIZ_QUESTIONS.every(q => review[q.id] === true));
+});
+
+test('review renders neutral empty states and only confused concepts with exact question and guide links', () => {
+  const render = (review: QuizReview) => renderToString(React.createElement(Router, { ssrPath: '/belajar', children: React.createElement(LearningQuizReview, { review }) }));
+  assert.match(render({}), /Belum ada jawaban yang diperiksa/);
+  assert.match(render({ modal: true }), /Soal lain mungkin belum dicoba/);
+  const review = Object.fromEntries(QUIZ_QUESTIONS.map(q => [q.id, false]));
+  const html = render(review);
+  for (const q of QUIZ_QUESTIONS) {
+    assert.ok(html.includes(QUIZ_CONCEPTS[q.id]));
+    assert.ok(html.includes(`href="#soal-${q.id}"`));
+    assert.ok(html.includes(`href="${q.guide.href}"`));
+    assert.ok(!render({ ...review, [q.id]: true }).includes(`data-testid="quiz-review-${q.id}"`));
+    const quiz = renderToString(React.createElement(LearningQuiz, { stepId: q.stepId }));
+    assert.ok(quiz.includes(`id="soal-${q.id}"`));
+  }
+  assert.match(html, /bukan nilai kelulusan atau bukti kepatuhan/);
+  assert.match(html, /hilang saat meninggalkan atau memuat ulang/);
+  const page = readFileSync('artifacts/sahabat-pajak/src/pages/belajar.tsx', 'utf8');
+  assert.match(page, /useState<QuizReview>\(\{\}\)/);
+  assert.match(page, /setQuizReview\(review => updateQuizReview\(review, question, attempt\)\)/);
+  const ui = readFileSync('artifacts/sahabat-pajak/src/components/learning-quiz.tsx', 'utf8');
+  assert.match(ui, /onAttemptChange\?\.\(question, emptyQuizAttempt\(\)\)/);
+  const summary = readFileSync('artifacts/sahabat-pajak/src/components/learning-quiz-review.tsx', 'utf8');
+  assert.match(summary, /section\.open = true/);
+  assert.match(summary, /target\?\.focus/);
 });

@@ -7,7 +7,9 @@ import { LEARNING_STEPS, learningQuestionHref, learningSummary, type LearningSte
 import { Notice, PageHeader } from '@/components/shell';
 import { Confirm } from '@/components/confirm';
 import { Button } from '@/components/ui/button';
-import { LearningQuiz } from '@/components/learning-quiz';
+import { LearningQuiz, type QuizAttemptChange } from '@/components/learning-quiz';
+import { LearningQuizReview } from '@/components/learning-quiz-review';
+import { updateQuizReview, type QuizReview } from '@/lib/learning-quiz';
 
 const DESC = 'Peta belajar pajak UMKM: enam tahap mandiri untuk memahami apa yang perlu diperiksa dan dipraktikkan. Progres hanya catatan belajar, bukan pemenuhan kewajiban pajak.';
 
@@ -41,7 +43,7 @@ function List({ title, items, tone, testid }: { title: string; items: string[]; 
   );
 }
 
-function StepCard({ step, index, done, onToggle, error }: { step: LearningStep; index: number; done: boolean; onToggle: () => void; error: string | null }) {
+function StepCard({ step, index, done, onToggle, error, onAttemptChange }: { step: LearningStep; index: number; done: boolean; onToggle: () => void; error: string | null; onAttemptChange: QuizAttemptChange }) {
   const actions = step.actions.filter(a => a.href !== step.library.href);
   return (
     <article id={`tahap-${step.id}`} aria-labelledby={`judul-${step.id}`} data-testid={`card-step-${step.id}`}
@@ -73,7 +75,7 @@ function StepCard({ step, index, done, onToggle, error }: { step: LearningStep; 
           <List title="Periksa diri" items={step.selfCheck} tone="text-[hsl(var(--success))]" testid={`list-selfcheck-${step.id}`} />
         </div>
       </div>
-      <LearningQuiz stepId={step.id} />
+      <LearningQuiz stepId={step.id} onAttemptChange={onAttemptChange} />
       <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-5">
         {actions.map((a, i) => <Link key={a.href} href={a.href} data-testid={`link-step-action-${step.id}-${i}`}
           className="press inline-flex items-center gap-1.5 rounded-xl border border-input bg-background/60 px-3.5 py-2 text-sm font-semibold text-white hover:border-primary">
@@ -101,6 +103,10 @@ export default function Belajar() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [resetError, setResetError] = useState<string | null>(null);
   const [status, setStatus] = useState('');
+  const [quizReview, setQuizReview] = useState<QuizReview>({});
+  const onAttemptChange: QuizAttemptChange = (question, attempt) => {
+    setQuizReview(review => updateQuizReview(review, question, attempt));
+  };
   const { done, total, percent, next } = learningSummary(learningCompleted);
   useEffect(() => {
     const stage = LEARNING_STEPS.find(s => window.location.hash === `#tahap-${s.id}`);
@@ -166,6 +172,8 @@ export default function Belajar() {
         </div>
       </section>
 
+      <LearningQuizReview review={quizReview} />
+
       <Link href="/glosarium" data-testid="link-learning-glossary"
         className="press mt-4 flex items-center gap-3 rounded-xl border border-input bg-card px-4 py-3 text-sm hover:border-primary">
         <BookText className="h-5 w-5 shrink-0 text-accent" />
@@ -184,7 +192,7 @@ export default function Belajar() {
 
       <ol className="mt-6 space-y-5">
         {LEARNING_STEPS.map((s, i) => <li key={s.id}>
-          <StepCard step={s} index={i} done={learningCompleted.includes(s.id)} onToggle={() => toggle(s)} error={errors[s.id] ?? null} />
+          <StepCard step={s} index={i} done={learningCompleted.includes(s.id)} onToggle={() => toggle(s)} error={errors[s.id] ?? null} onAttemptChange={onAttemptChange} />
         </li>)}
       </ol>
     </>
